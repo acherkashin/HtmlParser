@@ -7,7 +7,7 @@ object JSoupTest {
   def main(args: Array[String]): Unit = {
     val htmlParser = new HtmlParser("http://habrahabr.ru/")
     val htmlItems = htmlParser.LoadHtmlItem()
-    htmlItems.foreach(item => print(item.ToString))
+    htmlItems.foreach(item => println(item.toJson()))
     print(htmlItems.length)
   }
 }

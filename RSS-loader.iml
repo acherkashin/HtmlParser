@@ -16,5 +16,10 @@
     <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.8.1" level="project" />
     <orderEntry type="library" name="Maven: rome:rome:1.0" level="project" />
     <orderEntry type="library" name="Maven: jdom:jdom:1.0" level="project" />
+    <orderEntry type="library" name="Maven: net.liftweb:lift-json_2.9.1:2.4-M5" level="project" />
+    <orderEntry type="library" name="Maven: com.thoughtworks.paranamer:paranamer:2.3" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scalap:2.9.1" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-compiler:2.9.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.3.1" level="project" />
   </component>
 </module>

@@ -5,6 +5,7 @@ import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 
 import scala.collection.JavaConversions._
+import scala.collection.mutable._
 
 /**
  * Created by Александр on 15.03.2015.
@@ -69,9 +70,11 @@ class HtmlParser(strUrl: String){
 
     val doc: Document = Jsoup.connect(strUrl).get
     val elementsWithAttr: Elements = doc.getElementsByAttribute("href")
+    val htmlItems: HashSet[HtmlItem] = new HashSet[HtmlItem]()
 
-    val htmlItems = for(link <- elementsWithAttr if(IsValid(link) == true))  yield {
-      new HtmlItem(link.attr("href"),link.text())
+    for (element <- elementsWithAttr if (IsValid(element) == true)) {
+      val item = HtmlItem(element.attr("href"), element.text())
+      htmlItems.add(item)
     }
 
     htmlItems.toArray

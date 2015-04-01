@@ -12,7 +12,7 @@ import scala.collection.mutable._
  */
 class HtmlParser(strUrl: String){
   private val invalidEnds    = Array(".jpg",".css",".jpg",".png")
-  private val requiredPrefix = Array("http://","https://")
+  private val requiredPrefix = Array("http://habrahabr.ru","https://habrahabr.ru")
   private val invalidWords   = Array("/user","/register","/auth","/login","#")
 
   private def hasInvalidEnd(hyperLink: String): Boolean ={
@@ -66,7 +66,7 @@ class HtmlParser(strUrl: String){
     result
   }
 
-  def LoadHtmlItem(): Array[HtmlItem] ={
+  def LoadHtmlItem : Array[HtmlItem] ={
 
     val doc: Document = Jsoup.connect(strUrl).get
     val elementsWithAttr: Elements = doc.getElementsByAttribute("href")
@@ -79,4 +79,5 @@ class HtmlParser(strUrl: String){
 
     htmlItems.toArray
   }
+
 }

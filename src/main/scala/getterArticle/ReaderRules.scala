@@ -29,6 +29,8 @@ class ReaderRules(nameFolder : String){
      arrayRequiredWords.toArray
    }
 
+  def getURL() : String = { getWordsByProperty("url")(0) }
+
   def getKeyValue() : KeyValue = { val array = getWordsByProperty("content"); KeyValue(array(0), array(1)) }
 
   def getWordsForHtmlItems(): Array[String] = getWordsByProperty("htmlItems")

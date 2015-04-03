@@ -17,13 +17,13 @@ object Starter {
     //    ReaderRules.getWordsForCheckUrl.foreach(i => println(i))
     try{
       val parser1 = new HtmlParser("HabraHabr")
-      val array1 = parser1.LoadHtmlItemFromPage("http://habrahabr.ru/")
+      val array1 = parser1.LoadHtmlItemFromPage()
         println(array1.size)
         val articleWriter = new ArticleWriter("HabraHabr")
           articleWriter.WriteToFiles(array1)
 
         val parser2 = new HtmlParser("linux.org")
-        val array2 = parser2.LoadHtmlItemFromPage("https://www.linux.org.ru/")
+        val array2 = parser2.LoadHtmlItemFromPage()
         println(array2.size)
         val articleWriter2 = new ArticleWriter("linux.org")
         articleWriter2.WriteToFiles(array2)

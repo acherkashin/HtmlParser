@@ -24,6 +24,7 @@ class HtmlParser(nameFolder : String){
   private val wordsForInvalidUrl = readerRules.getWordsForInvalidUrl
   private val wordsForCheckUrl = readerRules.getWordsForCheckUrl
   private val keyValue = readerRules.getKeyValue
+  private val strUrl = readerRules.getURL
 
   def isInvalidUrl(url : String) : Boolean = {
     var isInvalid = false
@@ -79,7 +80,7 @@ class HtmlParser(nameFolder : String){
     id
   }
 
-  def LoadHtmlItemFromPage(strUrl : String) : Array[HtmlItem] ={
+  def LoadHtmlItemFromPage() : Array[HtmlItem] ={
     val logger = new Logger("article")
     logger.write(s"Обработка страницы $strUrl")
 
@@ -101,15 +102,8 @@ class HtmlParser(nameFolder : String){
       id match {
         case ID_HTMLITEM =>  HtmlItems += HtmlItem.CreateHtmlItem(url,keyValue)
         case ID_CHECKURL =>  CheckUrls += url
-//        case ID_INVALIDURL =>  {
-//                                  if(whatIsUrl(strUrl + url) == ID_HTMLITEM)
-//                                    HtmlItems += HtmlItem.CreateHtmlItem(strUrl + url,keyValue)
-//                                }
-
         case _ =>
       }
-
-
     }
 
     HtmlItems.toArray

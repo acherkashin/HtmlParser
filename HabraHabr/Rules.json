@@ -1,4 +1,6 @@
 {
+    "url" : ["http:\/\/habrahabr.ru"],
+
     "content" : ["class","content html_format"],
 
 	"prefCheckUrl" : [ "http:\/\/habrahabr.ru"],//строки, которые должны содержать все ссылки

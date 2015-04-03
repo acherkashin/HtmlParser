@@ -1,4 +1,6 @@
 {
+  	"url" : ["https:\/\/www.linux.org.ru\/"],
+
     "content" : ["class","msg_body"],
 
 	"prefCheckUrl" : [ "https:\/\/www.linux.org.ru\/"],//строки, которые должны содержать все ссылки

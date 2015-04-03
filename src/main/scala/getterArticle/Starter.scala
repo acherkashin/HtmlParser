@@ -14,12 +14,23 @@ import scala.collection.mutable.ArrayBuffer
 object Starter {
   def main(args:Array[String]):Unit = {
 //    ReaderRules.getWordsForInvalidUrl().foreach(i => println(i))
-//    ReaderRules.getWordsForCheckUrl.foreach(i => println(i))
-  val parser = new HtmlParser("http://habrahabr.ru/")
-  val array = parser.getAllArticle("http://habrahabr.ru/")
-    println(array.size)
-    ArticleWriter.WriteToFiles(array)
+    //    ReaderRules.getWordsForCheckUrl.foreach(i => println(i))
+    try{
+      val parser1 = new HtmlParser("HabraHabr")
+      val array1 = parser1.LoadHtmlItemFromPage("http://habrahabr.ru/")
+        println(array1.size)
+        val articleWriter = new ArticleWriter("HabraHabr")
+          articleWriter.WriteToFiles(array1)
 
+        val parser2 = new HtmlParser("linux.org")
+        val array2 = parser2.LoadHtmlItemFromPage("https://www.linux.org.ru/")
+        println(array2.size)
+        val articleWriter2 = new ArticleWriter("linux.org")
+        articleWriter2.WriteToFiles(array2)
+    }
+    catch {
+      case _  => println("Ошибка")
+    }
 
 }
 

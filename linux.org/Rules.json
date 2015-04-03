@@ -1,0 +1,29 @@
+{
+    "content" : ["class","msg_body"],
+
+	"prefCheckUrl" : [ "https:\/\/www.linux.org.ru\/"],//строки, которые должны содержать все ссылки
+
+  	"htmlItems" : [ "opensource",
+	  				"commercial",
+	  				"conference",
+	  				"hardware",
+	  				"android",
+	  				"kernel",
+	  				"multimedia",
+	  				"debian",
+	  				"mozila",
+	  				"java",
+	  				"internet",
+	  				"games" ], //строки,одну из которых, должны содержать ссылки на статьи
+
+	"invalidUrl" : [   ".jpg", //строки, которые не должны содержаться в ссылках
+					   ".css",
+					   ".jpg",
+					   ".png",
+					   "\/user",
+					   "\/register"
+					   ,"\/auth",
+					   "\/login",
+						   "#"
+	]
+}

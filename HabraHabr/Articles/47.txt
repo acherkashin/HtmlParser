@@ -1,0 +1,924 @@
+url: http://habrahabr.ru/post/254737/
+
+title: Говорящая панда или что можно сделать с FFmpeg и OpenCV на Android / Хабрахабр
+
+description:
+Эта публикация о том, как можно в Windows скомпилировать библиотеку для обработки видео и аудио FFmpeg под Android в Eclipse с помощью NDK. Вы узнаете, как связать FFmpeg с библиотекой для обработки изображений OpenCV и как это всё можно использовать в Java-коде Android приложения. Всё это будет рассказано в контексте процесса создания Android приложения, основной функционал которого как раз и завязан на использовании этих библиотек и их взаимодействии. Итак, заинтересованных прошу под кат. Дисклеймер Некоторые описываемые вещи наверняка покажутся многим очевидными, тем не менее, для меня, как для разработчика под Windows, эти задачи оказались новыми и их решение было не очевидным, поэтому описание технических деталей я постарался сделать максимально простым и понятным для людей, не имеющих большого опыта работы с Android NDK и всем, что с ним связано. Некоторые решения были найдены интуитивно, и поэтому, скорее всего, они не совсем «красивые». Предыстория Идея Android приложения, где бы использовались FFmpeg и OpenCV, появилась после просмотра одного рекламного ролика про минеральную воду Витутас (можете поискать на Youtube). В этом ролике иногда мелькали фото разных животных, которые вращали человеческими глазами, шевелили губами и уговаривали зрителя купить эту воду. Выглядело это довольно забавно. В общем, возникла мысль: что если дать пользователю возможность самому делать подобные ролики, причем не с компьютера, а с помощью своего телефона? Разумеется, сперва поискали аналоги. Что-то более или менее похожее было найдено в AppStore для iPhone, причем там процесс создания ролика был не очень удачным: выбираешь картинку, размечаешь на ней одну область, и потом камерой в этой области что-то снимаешь, то есть речь о том, чтобы наложить на картинку в разных местах хотя бы два глаза и рот вообще не шла. В Google Play же вообще ничего такого не было. Максимально близкие программы с похожим функционалом были такие, где на фото можно наложить анимированные элементы из ограниченных наборов. Одним словом, конкурентов мало, поэтому было принято решение приложение всё же делать. Выбор технологий Сразу возник логичный вопрос: «А как это все сделать?». Потратив дня два на изучение всяких библиотек для обработки видео и изображений, остановился на FFmpeg и OpenCV. Из плюсов можно перечислить следующие: обе библиотеки написаны на C/C++, то есть объединить их уже теоретически можно; бесплатные с открытым кодом: FFmpeg можно собрать под LGPL, а OpenCV вообще распространяется под лицензией BSD; очень быстрые, да и вообще крутые с какой стороны не посмотри. Из минусов: написаны на C/C++; все же FFmpeg сложноватый для того, чтобы в его коде быстро разобраться и понять, где надо что поменять. Схема использования вырисовывалась такая: OpenCV формирует каждый кадр видео ряда (например, помещает на картинку, глаза и рот), передает этот кадр каким-то образом в FFmpeg, а тот в свою очередь формирует из этих кадров видеопоток, параллельно не забывая про аудио. Надо признаться в том, что так как опыта разработки под Android было мало, а под Windows много, то прежде чем начать ковыряться в Eclipse и NDK я сделал маленькую программку в Visual Studio, которая доказала, что сама идея использовать FFmpeg и OpenCV имеет право на жизнь и, самое главное, что есть способ реализовать их взаимодействие. Но о реализации взаимодействия этих библиотек будет написано чуть позже, а это скорее легкая рекомендация на тему того, что лучше все же потратить время и проверить какую-то идею на технологиях, в которых разбираешься лучше всего, чем сразу с головой лезть во что-то новое. Насчет же компиляции FFmpeg в Visual Studio — сделать это оказалось на удивление легко, но эта статья все же об Android, поэтому если тема FFmpeg в Visual Studio интересна, то напишите об этом, и я постараюсь найти время и написать инструкцию о том, как это сделать. Итак, проверив, что идея объеденить FFmpeg и OpenCV работает, я приступил к разработке непосредственно Android приложения. План был таков: Компилируем и собираем FFmpeg и OpenCV под Android. Пишем код их взаимодействия. Используем это все в Java коде приложения. Делать это все решил в Eclipse, а не в Android Studio — как-то она мне на момент начала разработки показалась сыроватой и не очень удобной. FFmpeg, Android, NDK, Eclipse, Windows Первым делом, как все нормальные люди, я стал искать в интернете инструкции о том, как сделать кросс-компиляцию FFmpeg для Android в Windows. Статьи есть, предлагаются даже какие-то наборы make-файлов, есть что-то на гитхабе, но по ним мне не удалось это сделать. Возможно из-за отсутсвия опыта работы с этим всем, возможно из-за ошибок в этих инструкциях и make-файлах. Обычно подобные инструкции пишет человек, который хорошо разбирается в описываемых технологиях и поэтому опускает какие-то «очевидные» нюансы, и получается, что новичку этим невозможно пользоваться. В общем, пришлось с нуля сделать все самому. Ниже приводится примерная последовательность действий. 0. Предустановки Скачиваем и устанавливаем: Eclipse с CDT, Android SDK, NDK, cygwin и OpenCV Android SDK. Если есть необходимость поддержать Android на x86, то следует скачать еще и yasm — он нужен, чтобы сделать кросс-компиляцию *.asm файлов, но об этом позже. Инструкции по установке и настройке этого всего находятся на сайтах, откуда они собственно и скачиваются, а насчет установки и настройки NDK в Eclipse есть отличная статья на сайте opencv.org, которая выдается в гугле по запросу «OpenCV Introduction into Android Development», обязательно зайдите на нее. 1. Подготавливаем проект Создаем в Eclipse новый проект Android приложения и ковертируем его в C/C++ проект (смотрите статью «OpenCV Introduction into Android Development»). На самом деле Android проект не сконвертируется полностью в C/C++, а в него просто добавится возможность работать с C/C++. Скачиваем и распаковываем архив с кодом FFmpeg с сайта ffmpeg.org. Папку с кодом вида «ffmpeg-2.6.1» кидаем в папку «jni» проекта (если ее нет — создаем там же где лежат «res», «scr» и т. п.). Теперь необходимо создать конфигурационные файлы (самый важный из них «config.h») и make-файлы для FFmpeg. Здесь возникает первый нюанс: существуюет три платформы Android устройств — Arm, x86, MIPS. Для каждой из этих архитектур нужны собрать свои файлы библиотек *.so (аналог *.dll в Windows). NDK позволяет это сделать — в него включены компилятор и линковщик для каждой платформы. Для того, чтобы сгенерировать конфигурационные файлы в FFmpeg есть специальный скрипт, для запуска которого нам и нужно было установить cygwin. Итак, запускаем командную строку Cygwin Terminal и вводим приведенные ниже наборы команд. Bash-скрипты с пояснениями Для устройств ARM: $ cd D:
+$ cd MyProject/jni/ffmpeg-2.1.3/
+$ PREBUILT=D:/ndk/android-ndk-r9c/toolchains/arm-linux-androideabi-4.6/prebuilt/windows-x86_64
+$ PLATFORM=D:/ndk/android-ndk-r9c/platforms/android-8/arch-arm
+$ TMPDIR=D:/
+$ ./configure --enable-version3 --enable-shared --disable-static --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-ffserver  --disable-network --enable-cross-compile --target-os=linux --arch=arm --cross-prefix=$PREBUILT/bin/arm-linux-androideabi- --cc=$PREBUILT/bin/arm-linux-androideabi-gcc --ld=$PREBUILT/bin/arm-linux-androideabi-ld --tempprefix=D:/
+ Для устройств x86: $ cd D:
+$ cd MyProject/jni/ffmpeg-2.1.3/
+$ PREBUILT=D:/ndk/android-ndk-r9c/toolchains/x86-4.6/prebuilt/windows-x86_64
+$ PLATFORM=D:/ndk/android-ndk-r9c/platforms/android-9/arch-x86
+$ TMPDIR=D:/
+$ ./configure --enable-version3 --enable-shared --disable-static --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-ffserver  --disable-network --enable-cross-compile --target-os=linux --arch=x86 --cross-prefix=$PREBUILT/bin/i686-linux-android- --cc=$PREBUILT/bin/i686-linux-android-gcc --ld=$PREBUILT/bin/i686-linux-android-ld --tempprefix=D:/
+ Для устройств MIPS: $ cd D:
+$ cd MyProject/jni/ffmpeg-2.1.3/
+$ PREBUILT=D:/ndk/android-ndk-r9c/toolchains/mipsel-linux-android-4.6/prebuilt/windows-x86_64
+$ PLATFORM=D:/ndk/android-ndk-r9c/platforms/android-9/arch-mips
+$ TMPDIR=D:/
+$ ./configure --enable-version3 --enable-shared --disable-static --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-ffserver  --disable-network --enable-cross-compile --target-os=linux --arch=mips --cross-prefix=$PREBUILT/bin/mipsel-linux-android- --cc=$PREBUILT/bin/mipsel-linux-android-gcc --ld=$PREBUILT/bin/mipsel-linux-android-ld --tempprefix=D:/
+ Пояснения: Первые две команды — переход в папку с кодом FFmpeg, где лежит файл «configure» — это bash скрипт, который генерирует нужные нам файлы, в том числе и «config.h», который используется при компиляции; Далее мы создаем три временные переменные окружения PREBUILT, PLATFORM, TMPDIR, в первые две записываются пути к папкам в NDK, где лежат утилиты для кросс-компиляции под разные платформы, если в эти папки зайти, то там будет среди множества папок будет и папка «bin», в окторой и лежат компилятор и линковщик. TMPDIR — путь во временную папку, где скрипт при работе будет хранить временные свои файлы; Последняя команда это собственно запуск скрипта «configure» из папки «ffmpeg-2.6.1» с параметрами. Список всех возможных параметров скрипта с пояснениями выводятся по команде «./configure -h». Ниже описание тех параметров, которые мы используем: параметр --enable-version3 – говорим скрипту, чтобы он сгенерировал такой конфигурационный файл, чтобы с помощью него можно было скомпилировать библиотеки FFmpeg которы будут под лицензией LGPL 3.0; параметры --enable-shared и --disable-static – говорим скрипту, что хотим на выходе получить *.so файлы. Сделав это, то по идее в купе с LGPL мы сможем их линковать к своему коду на который LGPL не будет распространяться; параметры --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-ffserver --disable-network – этими параметрами мы говорим скрипту, что нам не нужно создавать консольные программы (другими словами ffmpeg.exe, ffplay.exe и другие); оставшиеся параметры понятны по своим названиям — мы говорим, что хотим сделать кросс-компиляцию, назначаем платформу (linux arm, mips или x86), прописываем скрипту пути к компилятору и линковщику, задаем путь к временной папке. Скрипт сгенерирует в папке «jni/ffmpeg-2.1.3» файл «config.h», «config.asm» и несколько make-файлов. 2. Make-файлы, компиляция и сборка Итак, на данном этапе у нас уже есть: проект Android-приложения в Eclipse, в папке «jni/ffmpeg-2.1.3» лежит код с FFmpeg, и только что мы сгенерировали нужный нам файл «config.h». Теперь надо сделать make-файлы, чтобы это все можно было скомпилировать и получить *.so файлы которые мы сможем использовать в Android приложении. Я пробовал использовать для компиляции make-файлы, сгенерированные скриптом, но у меня не получилось, скорее всего, по причине кривизны рук. Поэтому я решил сделать свои собственные make-файлы с комментариями и инклюдами. Для компиляции с помощью NDK необходимо минимум два make-файла: Android.mk и Application.mk, которые должны находиться в папке «jni» проекта. Application.mk обычно содержит не более десятка параметров и настраивает, если можно так выразиться, «глобальные» параметры компиляции. Android.mk отвечает за все остальное. Также есть ряд моментов, связанные с некоторыми ошибками в момент компиляции. Они решались либо с помощью Google, либо исправлением на основе информации, выданной NDK в консоли (ошибки хорошо сформулированны и исправление их не должно составить труда). К сожалению, все здесь привести я не могу (банально забыл толком что исправлял), но вот список некоторых: компилятор ругается на символ «av_restrict»: надо открыть файл «config.h» в папке «ffmpeg-2.1.3» и заменить строку «#define av_restrict restrict» на «#define av_restrict __restrict»; на некоторых машинах компилятор ругается на «getenv()»: это решается комментированием строки «extern char *getenv(const char *);» в файле «ndk\android-ndk-r9c\platforms\android-9\arch-arm\usr\include\stdlib.h». Обратите внимание, на путь — в нем есть папка зависимая от целевой архитектуры: «arch-arm» если вы компилируете под для Arm, «arch-mips» для MIPS и «arch-x86» для x86; для избежания конфликтов лучше переименовать в файле «ffmpeg.c» функцию main() в ffmpeg_main(). Ее мы будем вызывать из Java кода Android приложения. Еще при компиляции были пару ошибок непосредственно в коде какого-нибудь из файлов FFmpeg. Я просто комментировал это место (разумеется, более-менее убедившись не поломается ли что). К примеру, какие-то места, где что-то выводится на консоль. Возможно было что-то и еще, к сожалению, я не помню, но на самом деле ошибки компиляции легко исправимы. Make-файлы и bat-скрипты с пояснениями. Нюансы: помимо непосредственно модулей библиотеки FFmpeg, таких как libavcodec, libavfilter и так далее, еще нам надо будет скомпилировать код самой программы ffmpeg.exe как библиотеку ffmpeg.so. Мы будем вызывать ее main() функцию (которую мы переименовали в ffmpeg_main()) из Java-кода и передавать туда нужные нам параметры, а она будет делать для нас нужную работу; NDK не умеет компилировать *.asm файлы для x86 архитектуры, поэтому нам надо в начале с помощью yasm скомпилировать *.asm файлы, которые лежат в папках вида «jni\ffmpeg-2.1.3\libavcodec\x86», «jni\ffmpeg-2.1.3\libavfilter\x86» и так далее. Ниже будут приведены *.bat файлы, которые это делают. На выходе мы получим объектные файлы *.a, путь к которым мы укажем линковщику при компиляции под x86. Это надо сделать только если вы собираетесь поддерживать эту архитектуру; в make-файле практически для каждого модуля включается еще один make-файл вида «libavfilter_ignore.mk». В них для каждого модуля прописаны *.c файлы, которые не надо компилировать. Что это за файлы: часть из них, как я понял из содержимого, что-то вроде тестовых программок (как, например, mpegaudio_tablegen.c). Часть из них не предназначенны для компиляции, а просто подключаются через include (например h264qpel_template.c подключается в файле h264qpel.c). Наверняка в make-файлах, сгенерированных после работы скрипта confgiure (с которыми у меня ничего не сложилось) они все тоже игнорируются; в make-файл включена так же и сборка модуля OpenCV. Там все просто, читайте статью на сайте opencv.org под названием «OpenCV Introduction into Android Development». Он нужен для как раз для упомянутого взаимодействия FFmpeg-OpenCV. Об этом взаимодействии будет рассказано ниже; все модули FFmpeg с нуля у меня собираются полтора часа. Во время разработки просто невозможно работать, особенно если приходится часто что-то менять в какой-то модуле FFmpeg. Чтобы этого избежать, ниже будет приведен еще один make-файл. В нем с нуля будет компилироваться только один какой-нибудь модуль FFmpeg, а остальные будут использоваться уже ранее скомпилированные. Например, вы работаете в модуле libavfilter, что-то там программируете и постоянно меняете, вам нет нужды постоянно пересобирать еще и libavcodec и другие, достаточно взять уже ранее скомпилированные и нужным образом об этом указать в make-файле; в make-файле есть поясняющие комментарии, но так как там компилируется несоклько модулей, причем процедура компиляции похожа, то дублирующиеся команды в make-файле не поясняются. Android.mk - из него NDK берет список файлов кода для компиляции ################################################################################
+# записываем в переменную LOCAL_PATH текущий каталог проекта
+LOCAL_PATH := $(call my-dir) 
+# записываем в переменную FFMPEG_DIR имя папки где лежит код FFmpeg
+FFMPEG_DIR := ffmpeg-2.1.3   
+# записываем в переменную OPENCVROOT путь к папке с OpenCV Anroid SDK
+OPENCVROOT := D:\OpenCV-2.4.7.1-android-sdk
+
+# блок ниже нужен только для сборки под архитектуру x86
+# дело в том, что для x86 есть на ассемблере написаны оптимизированные функции для большинства FFmpeg модулей
+# но сам NDK не умеет компилировать *.asm файл, для этого мы будем использовать скаченный ранее yasm
+# до сборки нам надо с помощью yasm скомпилировать эти *.asm файлы и получить объектные *.a файлы, которые мы при компиляции будем подключать 
+# пример компиляции *.asm файлов смотрите в bat-скриптах 
+ifeq ($(TARGET_ARCH),x86)
+    ################################################################################
+    include $(CLEAR_VARS)
+
+    LOCAL_MODULE := avcodec_asm
+    LIBAVCODEC_ASM_A_FILE_PATH := $(LOCAL_PATH)/../obj/local/x86/objs/avcodec/ffmpeg-2.1.3/libavcodec/x86/libavcodec_asm.a
+    LOCAL_SRC_FILES := $(subst jni/,,$(LIBAVCODEC_ASM_A_FILE_PATH))
+
+    include $(PREBUILT_STATIC_LIBRARY)
+    ################################################################################
+    include $(CLEAR_VARS)
+
+    LOCAL_MODULE := avfilter_asm
+    LIBAVFILTER_ASM_A_FILE_PATH := $(LOCAL_PATH)/../obj/local/x86/objs/avfilter/ffmpeg-2.1.3/libavfilter/x86/libavfilter_asm.a
+    LOCAL_SRC_FILES := $(subst jni/,,$(LIBAVFILTER_ASM_A_FILE_PATH))
+
+    include $(PREBUILT_STATIC_LIBRARY)
+    ################################################################################
+    include $(CLEAR_VARS)
+
+    LOCAL_MODULE := avresample_asm
+    LIBAVRESAMPLE_ASM_A_FILE_PATH := $(LOCAL_PATH)/../obj/local/x86/objs/avresample/ffmpeg-2.1.3/libavresample/x86/libavresample_asm.a
+    LOCAL_SRC_FILES := $(subst jni/,,$(LIBAVRESAMPLE_ASM_A_FILE_PATH))
+
+    include $(PREBUILT_STATIC_LIBRARY)
+    ################################################################################
+    include $(CLEAR_VARS)
+
+    LOCAL_MODULE := avutil_asm
+    LIBAVUTIL_ASM_A_FILE_PATH := $(LOCAL_PATH)/../obj/local/x86/objs/avutil/ffmpeg-2.1.3/libavutil/x86/libavutil_asm.a
+    LOCAL_SRC_FILES := $(subst jni/,,$(LIBAVUTIL_ASM_A_FILE_PATH))
+
+    include $(PREBUILT_STATIC_LIBRARY)
+    ################################################################################
+    include $(CLEAR_VARS)
+
+    LOCAL_MODULE := swresample_asm
+    LIBSWRESAMPLE_ASM_A_FILE_PATH := $(LOCAL_PATH)/../obj/local/x86/objs/swresample/ffmpeg-2.1.3/libswresample/x86/libswresample_asm.a
+    LOCAL_SRC_FILES := $(subst jni/,,$(LIBSWRESAMPLE_ASM_A_FILE_PATH))
+
+    include $(PREBUILT_STATIC_LIBRARY)
+    ################################################################################
+    include $(CLEAR_VARS)
+
+    LOCAL_MODULE := swscale_asm
+    LIBSWSCALE_ASM_A_FILE_PATH := $(LOCAL_PATH)/../obj/local/x86/objs/swscale/ffmpeg-2.1.3/libswscale/x86/libswscale_asm.a
+    LOCAL_SRC_FILES := $(subst jni/,,$(LIBSWSCALE_ASM_A_FILE_PATH))
+
+    include $(PREBUILT_STATIC_LIBRARY)
+    ################################################################################
+endif
+
+# ниже мы по-модульно собираем FFmpeg
+################################################################################
+# собираем модуль FFmpeg avutils.so
+
+# это троку надо вызывать перед сборкой каждого модуля
+include $(CLEAR_VARS)
+
+# в соответствующие переменные записываются пути к файлам по максам *.asm, *.c  и т.д. из соответствующих папок
+# обратите внимание на часть пути "$(TARGET_ARCH)" - в этой пеерменной содержится имя текущей архитектуры для которой происходит компиляция
+# некоторые модули ffmpeg содержат код оптимизированный для каждой из архитектуры, который лежит в соответствующих папках
+LIBAVUTIL_LIB_ARCH_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavutil/$(TARGET_ARCH)/*.asm)
+LIBAVUTIL_LIB_ARCH_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavutil/$(TARGET_ARCH)/*.c)
+LIBAVUTIL_LIB_ARCH_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavutil/$(TARGET_ARCH)/*.S)
+LIBAVUTIL_LIB_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavutil/*.asm)
+LIBAVUTIL_LIB_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavutil/*.c)
+LIBAVUTIL_LIB_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavutil/*.S)
+LIBAVUTIL_LIB_CPP_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavutil/*.cpp)
+
+# оказалось, что в переменных выше пути к файлам для компиляции прописаны неверно и NDK ругается, что не может эти файлы найти
+# поэтому команды ниже просто из путей записанных в переменные удаляют строчку "jni/" это исправляет путь
+LIBAVUTIL_LIB_ARCH_ASM_FILES := $(subst jni/,,$(LIBAVUTIL_LIB_ARCH_ASM_FILES))
+LIBAVUTIL_LIB_ARCH_C_FILES := $(subst jni/,,$(LIBAVUTIL_LIB_ARCH_C_FILES))
+LIBAVUTIL_LIB_ARCH_S_FILES := $(subst jni/,,$(LIBAVUTIL_LIB_ARCH_S_FILES))
+LIBAVUTIL_LIB_ASM_FILES := $(subst jni/,,$(LIBAVUTIL_LIB_ASM_FILES))
+LIBAVUTIL_LIB_C_FILES := $(subst jni/,,$(LIBAVUTIL_LIB_C_FILES))
+LIBAVUTIL_LIB_S_FILES := $(subst jni/,,$(LIBAVUTIL_LIB_S_FILES))
+LIBAVUTIL_LIB_CPP_FILES := $(subst jni/,,$(LIBAVUTIL_LIB_CPP_FILES))
+
+# здесь подключается дополнительный make-файл, в котором прописаны файлы, которые компилировать не нужно, об этом ниже
+include  $(LOCAL_PATH)/libavutil_ignore.mk
+
+# собираем все файлы в одну кучу, теперь в переменной LIBAVUTIL_FILES записаны пути ко всем файлам исходников компонента avutils, которые надо скомпилировать
+LIBAVUTIL_FILES := $(sort $(LIBAVUTIL_LIB_ARCH_ASM_FILES)) $(sort $(LIBAVUTIL_LIB_ARCH_C_FILES)) $(sort $(LIBAVUTIL_LIB_ARCH_S_FILES)) $(sort $(LIBAVUTIL_LIB_ASM_FILES)) $(sort $(LIBAVUTIL_LIB_C_FILES)) $(sort $(LIBAVUTIL_LIB_S_FILES)) $(sort $(LIBAVUTIL_LIB_CPP_FILES))
+
+# здесь заполняются последовательно переменные для компиляции
+# список файлов для компиляции
+LOCAL_SRC_FILES := $(LIBAVUTIL_FILES)
+# список папок с заголовочными файлами
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FFMPEG_DIR) $(LOCAL_PATH)/$(FFMPEG_DIR)/libavutil/$(TARGET_ARCH)
+# где-то в FFmpeg исопльзуются функции из стандартных библиотек zlib и log, этой строкой мы ее подключаем
+LOCAL_LDLIBS += -lz -llog
+# даем имя файлу, который мы получим на выходе libavutil.so
+LOCAL_MODULE := avutil
+# самое интересное, в переменной TARGET_ARCH в момент компилирования содержится название текущей архитектуры для которой происходит компиляция
+# здесь мы в зависимости от архитектуры назначаем переменной LOCAL_CFLAGS нужные флаги для компиляции
+# большинство из них были подобраны методом проб, гугления и т.п.
+ifeq ($(TARGET_ARCH),arm)
+    LOCAL_CFLAGS += -O3 -fpic -DANDROID
+    LOCAL_ARM_MODE := arm
+else ifeq ($(TARGET_ARCH),x86)
+    LOCAL_CFLAGS += -O3 -fpic -DANDROID
+    # здесь мы и подключаем для x86 скомпилированные с помощью yasm объектные файлы
+	LOCAL_STATIC_LIBRARIES += avutil_asm
+else ifeq ($(TARGET_ARCH),mips)
+	LOCAL_CFLAGS += -O3 -DANDROID -Wfatal-errors -Wno-deprecated -std=c99 -fomit-frame-pointer -mips32r2 -mdsp -mdspr2 -mhard-float -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wno-format-zero-length -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wno-pointer-to-int-cast -Wstrict-prototypes -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=missing-prototypes -Werror=return-type -Werror=vla
+endif
+
+# этой строкой мы подключаем make-файл из NDK, который компилирует нам shared-библиотеку, или *.so файл
+include $(BUILD_SHARED_LIBRARY)
+################################################################################
+# собираем модуль FFmpeg avcodec.so
+include $(CLEAR_VARS)
+
+LIBAVCODEC_LIB_ARCH_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavcodec/$(TARGET_ARCH)/*.asm)
+LIBAVCODEC_LIB_ARCH_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavcodec/$(TARGET_ARCH)/*.c)
+LIBAVCODEC_LIB_ARCH_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavcodec/$(TARGET_ARCH)/*.S)
+LIBAVCODEC_LIB_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavcodec/*.asm)
+LIBAVCODEC_LIB_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavcodec/*.c)
+LIBAVCODEC_LIB_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavcodec/*.S)
+LIBAVCODEC_LIB_CPP_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavcodec/*.cpp)
+
+LIBAVCODEC_LIB_ARCH_ASM_FILES := $(subst jni/,,$(LIBAVCODEC_LIB_ARCH_ASM_FILES))
+LIBAVCODEC_LIB_ARCH_C_FILES := $(subst jni/,,$(LIBAVCODEC_LIB_ARCH_C_FILES))
+LIBAVCODEC_LIB_ARCH_S_FILES := $(subst jni/,,$(LIBAVCODEC_LIB_ARCH_S_FILES))
+LIBAVCODEC_LIB_ASM_FILES := $(subst jni/,,$(LIBAVCODEC_LIB_ASM_FILES))
+LIBAVCODEC_LIB_C_FILES := $(subst jni/,,$(LIBAVCODEC_LIB_C_FILES))
+LIBAVCODEC_LIB_S_FILES := $(subst jni/,,$(LIBAVCODEC_LIB_S_FILES))
+LIBAVCODEC_LIB_CPP_FILES := $(subst jni/,,$(LIBAVCODEC_LIB_CPP_FILES))
+
+include  $(LOCAL_PATH)/libavcodec_ignore.mk
+
+LIBAVCODEC_FILES := $(sort $(LIBAVCODEC_LIB_ARCH_ASM_FILES)) $(sort $(LIBAVCODEC_LIB_ARCH_C_FILES)) $(sort $(LIBAVCODEC_LIB_ARCH_S_FILES)) $(sort $(LIBAVCODEC_LIB_ASM_FILES)) $(sort $(LIBAVCODEC_LIB_C_FILES)) $(sort $(LIBAVCODEC_LIB_S_FILES)) $(sort $(LIBAVCODEC_LIB_CPP_FILES))
+
+LOCAL_SRC_FILES := $(LIBAVCODEC_FILES)
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FFMPEG_DIR) $(LOCAL_PATH)/$(FFMPEG_DIR)/libavcodec $(LOCAL_PATH)/$(FFMPEG_DIR)/libavcodec/$(TARGET_ARCH)
+LOCAL_LDLIBS += -lz -llog
+# так как модули ffmpeg используют друг друга, то здесь мы добавляем для компиляции и сборки каждого следующего модуля предыдущий уже скопилированный, 
+# это надо, чтобы линковщик не ругался при сборке, что не может найти какие-то функции
+LOCAL_SHARED_LIBRARIES += libavutil
+LOCAL_MODULE := avcodec
+ifeq ($(TARGET_ARCH),arm)
+    LOCAL_CFLAGS += -O3 -fpic -DANDROID
+    LOCAL_ARM_MODE := arm
+else ifeq ($(TARGET_ARCH),x86)
+	 LOCAL_CFLAGS += -O3 -fno-pic -DANDROID
+     LOCAL_STATIC_LIBRARIES += avutil_asm avcodec_asm
+     LOCAL_SHARED_LIBRARIES += libavutil_asm libavcodec_asm
+else ifeq ($(TARGET_ARCH),mips)
+	LOCAL_CFLAGS += -O3 -DANDROID -Wfatal-errors -Wno-deprecated -std=c99 -fomit-frame-pointer -mips32r2 -mdsp -mdspr2 -mhard-float -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wno-format-zero-length -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wno-pointer-to-int-cast -Wstrict-prototypes -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=missing-prototypes -Werror=return-type -Werror=vla
+endif
+
+include $(BUILD_SHARED_LIBRARY)
+################################################################################
+# собираем модуль FFmpeg avformat.so
+include $(CLEAR_VARS)
+
+LIBAVFORMAT_LIB_ARCH_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavformat/$(TARGET_ARCH)/*.asm)
+LIBAVFORMAT_LIB_ARCH_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavformat/$(TARGET_ARCH)/*.c)
+LIBAVFORMAT_LIB_ARCH_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavformat/$(TARGET_ARCH)/*.S)
+LIBAVFORMAT_LIB_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavformat/*.asm)
+LIBAVFORMAT_LIB_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavformat/*.c)
+LIBAVFORMAT_LIB_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavformat/*.S)
+LIBAVFORMAT_LIB_CPP_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavformat/*.cpp)
+
+LIBAVFORMAT_LIB_ARCH_ASM_FILES := $(subst jni/,,$(LIBAVFORMAT_LIB_ARCH_ASM_FILES))
+LIBAVFORMAT_LIB_ARCH_C_FILES := $(subst jni/,,$(LIBAVFORMAT_LIB_ARCH_C_FILES))
+LIBAVFORMAT_LIB_ARCH_S_FILES := $(subst jni/,,$(LIBAVFORMAT_LIB_ARCH_S_FILES))
+LIBAVFORMAT_LIB_ASM_FILES := $(subst jni/,,$(LIBAVFORMAT_LIB_ASM_FILES))
+LIBAVFORMAT_LIB_C_FILES := $(subst jni/,,$(LIBAVFORMAT_LIB_C_FILES))
+LIBAVFORMAT_LIB_S_FILES := $(subst jni/,,$(LIBAVFORMAT_LIB_S_FILES))
+LIBAVFORMAT_LIB_CPP_FILES := $(subst jni/,,$(LIBAVFORMAT_LIB_CPP_FILES))
+
+include  $(LOCAL_PATH)/libavformat_ignore.mk
+
+LIBAVFORMAT_FILES := $(sort $(LIBAVFORMAT_LIB_ARCH_ASM_FILES)) $(sort $(LIBAVFORMAT_LIB_ARCH_C_FILES)) $(sort $(LIBAVFORMAT_LIB_ARCH_S_FILES)) $(sort $(LIBAVFORMAT_LIB_ASM_FILES)) $(sort $(LIBAVFORMAT_LIB_C_FILES)) $(sort $(LIBAVFORMAT_LIB_S_FILES)) $(sort $(LIBAVFORMAT_LIB_CPP_FILES))
+
+LOCAL_SRC_FILES := $(LIBAVFORMAT_FILES)
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FFMPEG_DIR) $(LOCAL_PATH)/$(FFMPEG_DIR)/libavformat $(LOCAL_PATH)/$(FFMPEG_DIR)/libavformat/$(TARGET_ARCH)
+LOCAL_LDLIBS += -lz -llog
+LOCAL_SHARED_LIBRARIES += libavutil libavcodec
+LOCAL_MODULE := avformat
+ifeq ($(TARGET_ARCH),arm)
+    LOCAL_CFLAGS += -O3 -fpic -DANDROID
+    LOCAL_ARM_MODE := arm
+else ifeq ($(TARGET_ARCH),x86)
+	LOCAL_CFLAGS += -O3 -fpic -DANDROID
+else ifeq ($(TARGET_ARCH),mips)
+	LOCAL_CFLAGS += -O3 -DANDROID -Wfatal-errors -Wno-deprecated -std=c99 -fomit-frame-pointer -mips32r2 -mdsp -mdspr2 -mhard-float -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wno-format-zero-length -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wno-pointer-to-int-cast -Wstrict-prototypes -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=missing-prototypes -Werror=return-type -Werror=vla
+endif
+
+include $(BUILD_SHARED_LIBRARY)
+################################################################################
+# собираем модуль FFmpeg swscale.so
+include $(CLEAR_VARS)
+
+LIBSWSCALE_LIB_ARCH_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswscale/$(TARGET_ARCH)/*.asm)
+LIBSWSCALE_LIB_ARCH_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswscale/$(TARGET_ARCH)/*.c)
+LIBSWSCALE_LIB_ARCH_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswscale/$(TARGET_ARCH)/*.S)
+LIBSWSCALE_LIB_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswscale/*.asm)
+LIBSWSCALE_LIB_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswscale/*.c)
+LIBSWSCALE_LIB_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswscale/*.S)
+LIBSWSCALE_LIB_CPP_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswscale/*.cpp)
+
+LIBSWSCALE_LIB_ARCH_ASM_FILES := $(subst jni/,,$(LIBSWSCALE_LIB_ARCH_ASM_FILES))
+LIBSWSCALE_LIB_ARCH_C_FILES := $(subst jni/,,$(LIBSWSCALE_LIB_ARCH_C_FILES))
+LIBSWSCALE_LIB_ARCH_S_FILES := $(subst jni/,,$(LIBSWSCALE_LIB_ARCH_S_FILES))
+LIBSWSCALE_LIB_ASM_FILES := $(subst jni/,,$(LIBSWSCALE_LIB_ASM_FILES))
+LIBSWSCALE_LIB_C_FILES := $(subst jni/,,$(LIBSWSCALE_LIB_C_FILES))
+LIBSWSCALE_LIB_S_FILES := $(subst jni/,,$(LIBSWSCALE_LIB_S_FILES))
+LIBSWSCALE_LIB_CPP_FILES := $(subst jni/,,$(LIBSWSCALE_LIB_CPP_FILES))
+
+include  $(LOCAL_PATH)/libswscale_ignore.mk
+
+LIBSWSCALE_FILES := $(sort $(LIBSWSCALE_LIB_ARCH_ASM_FILES)) $(sort $(LIBSWSCALE_LIB_ARCH_C_FILES)) $(sort $(LIBSWSCALE_LIB_ARCH_S_FILES)) $(sort $(LIBSWSCALE_LIB_ASM_FILES)) $(sort $(LIBSWSCALE_LIB_C_FILES)) $(sort $(LIBSWSCALE_LIB_S_FILES)) $(sort $(LIBSWSCALE_LIB_CPP_FILES))
+
+LOCAL_SRC_FILES := $(LIBSWSCALE_FILES)
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FFMPEG_DIR) $(LOCAL_PATH)/$(FFMPEG_DIR)/libswscale $(LOCAL_PATH)/$(FFMPEG_DIR)/libswscale/$(TARGET_ARCH)
+LOCAL_LDLIBS += -lz -llog
+LOCAL_SHARED_LIBRARIES += libavutil
+LOCAL_MODULE := swscale
+ifeq ($(TARGET_ARCH),arm)
+    LOCAL_CFLAGS += -O3 -fpic -DANDROID
+    LOCAL_ARM_MODE := arm
+else ifeq ($(TARGET_ARCH),x86)
+	LOCAL_CFLAGS += -O3 -fno-pic -DANDROID
+    LOCAL_STATIC_LIBRARIES += avutil_asm swscale_asm
+else ifeq ($(TARGET_ARCH),mips)
+	LOCAL_CFLAGS += -O3 -DANDROID -Wfatal-errors -Wno-deprecated -std=c99 -fomit-frame-pointer -mips32r2 -mdsp -mdspr2 -mhard-float -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wno-format-zero-length -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wno-pointer-to-int-cast -Wstrict-prototypes -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=missing-prototypes -Werror=return-type -Werror=vla
+endif
+
+include $(BUILD_SHARED_LIBRARY)
+################################################################################
+# собираем модуль FFmpeg postproc.so
+include $(CLEAR_VARS)
+
+LIBPOSTPROC_LIB_ARCH_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libpostproc/$(TARGET_ARCH)/*.asm)
+LIBPOSTPROC_LIB_ARCH_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libpostproc/$(TARGET_ARCH)/*.c)
+LIBPOSTPROC_LIB_ARCH_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libpostproc/$(TARGET_ARCH)/*.S)
+LIBPOSTPROC_LIB_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libpostproc/*.asm)
+LIBPOSTPROC_LIB_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libpostproc/*.c)
+LIBPOSTPROC_LIB_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libpostproc/*.S)
+LIBPOSTPROC_LIB_CPP_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libpostproc/*.cpp)
+
+LIBPOSTPROC_LIB_ARCH_ASM_FILES := $(subst jni/,,$(LIBPOSTPROC_LIB_ARCH_ASM_FILES))
+LIBPOSTPROC_LIB_ARCH_C_FILES := $(subst jni/,,$(LIBPOSTPROC_LIB_ARCH_C_FILES))
+LIBPOSTPROC_LIB_ARCH_S_FILES := $(subst jni/,,$(LIBPOSTPROC_LIB_ARCH_S_FILES))
+LIBPOSTPROC_LIB_ASM_FILES := $(subst jni/,,$(LIBPOSTPROC_LIB_ASM_FILES))
+LIBPOSTPROC_LIB_C_FILES := $(subst jni/,,$(LIBPOSTPROC_LIB_C_FILES))
+LIBPOSTPROC_LIB_S_FILES := $(subst jni/,,$(LIBPOSTPROC_LIB_S_FILES))
+LIBPOSTPROC_LIB_CPP_FILES := $(subst jni/,,$(LIBPOSTPROC_LIB_CPP_FILES))
+
+include  $(LOCAL_PATH)/libpostproc_ignore.mk
+
+LIBPOSTPROC_FILES := $(sort $(LIBPOSTPROC_LIB_ARCH_ASM_FILES)) $(sort $(LIBPOSTPROC_LIB_ARCH_C_FILES)) $(sort $(LIBPOSTPROC_LIB_ARCH_S_FILES)) $(sort $(LIBPOSTPROC_LIB_ASM_FILES)) $(sort $(LIBPOSTPROC_LIB_C_FILES)) $(sort $(LIBPOSTPROC_LIB_S_FILES)) $(sort $(LIBPOSTPROC_LIB_CPP_FILES))
+
+LOCAL_SRC_FILES := $(LIBPOSTPROC_FILES)
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FFMPEG_DIR) $(LOCAL_PATH)/$(FFMPEG_DIR)/libpostproc $(LOCAL_PATH)/$(FFMPEG_DIR)/libpostproc/$(TARGET_ARCH)
+LOCAL_LDLIBS += -lz -llog
+LOCAL_SHARED_LIBRARIES += libavutil
+LOCAL_MODULE := postproc
+ifeq ($(TARGET_ARCH),arm)
+    LOCAL_CFLAGS += -O3 -fpic -DANDROID
+    LOCAL_ARM_MODE := arm
+else ifeq ($(TARGET_ARCH),x86)
+	LOCAL_CFLAGS += -O3 -fno-pic -DANDROID
+else ifeq ($(TARGET_ARCH),mips)
+	LOCAL_CFLAGS += -O3 -DANDROID -Wfatal-errors -Wno-deprecated -std=c99 -fomit-frame-pointer -mips32r2 -mdsp -mdspr2 -mhard-float -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wno-format-zero-length -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wno-pointer-to-int-cast -Wstrict-prototypes -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=missing-prototypes -Werror=return-type -Werror=vla
+endif
+
+include $(BUILD_SHARED_LIBRARY)
+################################################################################
+# собираем модуль FFmpeg swresample.so
+include $(CLEAR_VARS)
+
+LIBSWRESAMPLE_LIB_ARCH_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswresample/$(TARGET_ARCH)/*.asm)
+LIBSWRESAMPLE_LIB_ARCH_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswresample/$(TARGET_ARCH)/*.c)
+LIBSWRESAMPLE_LIB_ARCH_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswresample/$(TARGET_ARCH)/*.S)
+LIBSWRESAMPLE_LIB_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswresample/*.asm)
+LIBSWRESAMPLE_LIB_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswresample/*.c)
+LIBSWRESAMPLE_LIB_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswresample/*.S)
+LIBSWRESAMPLE_LIB_CPP_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libswresample/*.cpp)
+
+LIBSWRESAMPLE_LIB_ARCH_ASM_FILES := $(subst jni/,,$(LIBSWRESAMPLE_LIB_ARCH_ASM_FILES))
+LIBSWRESAMPLE_LIB_ARCH_C_FILES := $(subst jni/,,$(LIBSWRESAMPLE_LIB_ARCH_C_FILES))
+LIBSWRESAMPLE_LIB_ARCH_S_FILES := $(subst jni/,,$(LIBSWRESAMPLE_LIB_ARCH_S_FILES))
+LIBSWRESAMPLE_LIB_ASM_FILES := $(subst jni/,,$(LIBSWRESAMPLE_LIB_ASM_FILES))
+LIBSWRESAMPLE_LIB_C_FILES := $(subst jni/,,$(LIBSWRESAMPLE_LIB_C_FILES))
+LIBSWRESAMPLE_LIB_S_FILES := $(subst jni/,,$(LIBSWRESAMPLE_LIB_S_FILES))
+LIBSWRESAMPLE_LIB_CPP_FILES := $(subst jni/,,$(LIBSWRESAMPLE_LIB_CPP_FILES))
+
+include  $(LOCAL_PATH)/libswresample_ignore.mk
+
+LIBSWRESAMPLE_FILES := $(sort $(LIBSWRESAMPLE_LIB_ARCH_ASM_FILES)) $(sort $(LIBSWRESAMPLE_LIB_ARCH_C_FILES)) $(sort $(LIBSWRESAMPLE_LIB_ARCH_S_FILES)) $(sort $(LIBSWRESAMPLE_LIB_ASM_FILES)) $(sort $(LIBSWRESAMPLE_LIB_C_FILES)) $(sort $(LIBSWRESAMPLE_LIB_S_FILES)) $(sort $(LIBSWRESAMPLE_LIB_CPP_FILES))
+
+LOCAL_SRC_FILES := $(LIBSWRESAMPLE_FILES)
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FFMPEG_DIR) $(LOCAL_PATH)/$(FFMPEG_DIR)/libswresample $(LOCAL_PATH)/$(FFMPEG_DIR)/libswresample/$(TARGET_ARCH)
+LOCAL_LDLIBS += -lz -llog
+LOCAL_SHARED_LIBRARIES += libavutil
+LOCAL_MODULE := swresample
+ifeq ($(TARGET_ARCH),arm)
+    LOCAL_CFLAGS += -O3 -fpic -DANDROID
+    LOCAL_ARM_MODE := arm
+else ifeq ($(TARGET_ARCH),x86)
+	LOCAL_CFLAGS += -O3 -fpic -DANDROID
+    LOCAL_STATIC_LIBRARIES += avutil_asm swresample_asm
+else ifeq ($(TARGET_ARCH),mips)
+	LOCAL_CFLAGS += -O3 -DANDROID -Wfatal-errors -Wno-deprecated -std=c99 -fomit-frame-pointer -mips32r2 -mdsp -mdspr2 -mhard-float -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wno-format-zero-length -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wno-pointer-to-int-cast -Wstrict-prototypes -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=missing-prototypes -Werror=return-type -Werror=vla
+endif
+
+include $(BUILD_SHARED_LIBRARY)
+################################################################################
+# собираем модуль FFmpeg avresample.so
+include $(CLEAR_VARS)
+
+LIBAVRESAMPLE_LIB_ARCH_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavresample/$(TARGET_ARCH)/*.asm)
+LIBAVRESAMPLE_LIB_ARCH_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavresample/$(TARGET_ARCH)/*.c)
+LIBAVRESAMPLE_LIB_ARCH_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavresample/$(TARGET_ARCH)/*.S)
+LIBAVRESAMPLE_LIB_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavresample/*.asm)
+LIBAVRESAMPLE_LIB_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavresample/*.c)
+LIBAVRESAMPLE_LIB_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavresample/*.S)
+LIBAVRESAMPLE_LIB_CPP_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavresample/*.cpp)
+
+LIBAVRESAMPLE_LIB_ARCH_ASM_FILES := $(subst jni/,,$(LIBAVRESAMPLE_LIB_ARCH_ASM_FILES))
+LIBAVRESAMPLE_LIB_ARCH_C_FILES := $(subst jni/,,$(LIBAVRESAMPLE_LIB_ARCH_C_FILES))
+LIBAVRESAMPLE_LIB_ARCH_S_FILES := $(subst jni/,,$(LIBAVRESAMPLE_LIB_ARCH_S_FILES))
+LIBAVRESAMPLE_LIB_ASM_FILES := $(subst jni/,,$(LIBAVRESAMPLE_LIB_ASM_FILES))
+LIBAVRESAMPLE_LIB_C_FILES := $(subst jni/,,$(LIBAVRESAMPLE_LIB_C_FILES))
+LIBAVRESAMPLE_LIB_S_FILES := $(subst jni/,,$(LIBAVRESAMPLE_LIB_S_FILES))
+LIBAVRESAMPLE_LIB_CPP_FILES := $(subst jni/,,$(LIBAVRESAMPLE_LIB_CPP_FILES))
+
+include  $(LOCAL_PATH)/libavresample_ignore.mk
+
+LIBAVRESAMPLE_FILES := $(sort $(LIBAVRESAMPLE_LIB_ARCH_ASM_FILES)) $(sort $(LIBAVRESAMPLE_LIB_ARCH_C_FILES)) $(sort $(LIBAVRESAMPLE_LIB_ARCH_S_FILES)) $(sort $(LIBAVRESAMPLE_LIB_ASM_FILES)) $(sort $(LIBAVRESAMPLE_LIB_C_FILES)) $(sort $(LIBAVRESAMPLE_LIB_S_FILES)) $(sort $(LIBAVRESAMPLE_LIB_CPP_FILES))
+
+LOCAL_SRC_FILES := $(LIBAVRESAMPLE_FILES)
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FFMPEG_DIR) $(LOCAL_PATH)/$(FFMPEG_DIR)/libavresample $(LOCAL_PATH)/$(FFMPEG_DIR)/libavresample/$(TARGET_ARCH)
+LOCAL_LDLIBS += -lz -llog
+LOCAL_SHARED_LIBRARIES += libavutil
+LOCAL_MODULE := avresample
+ifeq ($(TARGET_ARCH),arm)
+    LOCAL_CFLAGS += -O3 -fpic -DANDROID
+    LOCAL_ARM_MODE := arm
+else ifeq ($(TARGET_ARCH),x86)
+	LOCAL_CFLAGS += -O3 -fpic -DANDROID
+    LOCAL_STATIC_LIBRARIES += avutil_asm avresample_asm
+else ifeq ($(TARGET_ARCH),mips)
+	LOCAL_CFLAGS += -O3 -DANDROID -Wfatal-errors -Wno-deprecated -std=c99 -fomit-frame-pointer -mips32r2 -mdsp -mdspr2 -mhard-float -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wno-format-zero-length -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wno-pointer-to-int-cast -Wstrict-prototypes -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=missing-prototypes -Werror=return-type -Werror=vla
+endif
+
+include $(BUILD_SHARED_LIBRARY)
+################################################################################
+# собираем модуль OpenCV
+include $(CLEAR_VARS)
+
+OPENCV_CAMERA_MODULES := off
+OPENCV_INSTALL_MODULES := on
+
+include $(OPENCVROOT)/sdk/native/jni/OpenCV.mk
+################################################################################
+# собираем модуль FFmpeg avfilter.so
+include $(CLEAR_VARS)
+
+LIBAVFILTER_LIB_ARCH_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/$(TARGET_ARCH)/*.asm)
+LIBAVFILTER_LIB_ARCH_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/$(TARGET_ARCH)/*.c)
+LIBAVFILTER_LIB_ARCH_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/$(TARGET_ARCH)/*.S)
+LIBAVFILTER_LIB_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/*.asm)
+LIBAVFILTER_LIB_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/*.c)
+LIBAVFILTER_LIB_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/*.S)
+LIBAVFILTER_LIB_CPP_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/*.cpp)
+LIBAVFILTER_LIB_EX_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/libmpcodecs/*.c)
+
+LIBAVFILTER_LIB_ARCH_ASM_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_ARCH_ASM_FILES))
+LIBAVFILTER_LIB_ARCH_C_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_ARCH_C_FILES))
+LIBAVFILTER_LIB_ARCH_S_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_ARCH_S_FILES))
+LIBAVFILTER_LIB_ASM_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_ASM_FILES))
+LIBAVFILTER_LIB_C_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_C_FILES))
+LIBAVFILTER_LIB_S_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_S_FILES))
+LIBAVFILTER_LIB_CPP_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_CPP_FILES))
+LIBAVFILTER_LIB_EX_C_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_EX_C_FILES))
+
+include  $(LOCAL_PATH)/libavfilter_ignore.mk
+
+LIBAVFILTER_FILES := $(sort $(LIBAVFILTER_LIB_ARCH_ASM_FILES)) $(sort $(LIBAVFILTER_LIB_ARCH_C_FILES)) $(sort $(LIBAVFILTER_LIB_ARCH_S_FILES)) $(sort $(LIBAVFILTER_LIB_ASM_FILES)) $(sort $(LIBAVFILTER_LIB_C_FILES)) $(sort $(LIBAVFILTER_LIB_S_FILES)) $(sort $(LIBAVFILTER_LIB_CPP_FILES)) $(sort $(LIBAVFILTER_LIB_EX_C_FILES))
+
+LOCAL_SRC_FILES := $(LIBAVFILTER_FILES)
+LOCAL_C_INCLUDES += $(OPENCVROOT)/sdk/native/jni/include $(LOCAL_PATH)/$(FFMPEG_DIR) $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/$(TARGET_ARCH) $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/libmpcodecs $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/libmpcodecs/libvo
+LOCAL_LDLIBS += -lz -llog
+LOCAL_SHARED_LIBRARIES += libavutil libavcodec libavformat libswresample libpostproc libswscale libavresample libopencv_java
+LOCAL_MODULE := avfilter
+ifeq ($(TARGET_ARCH),arm)
+    LOCAL_CFLAGS += -D__STDC_CONSTANT_MACROS -O3 -fpic -DANDROID 
+    LOCAL_ARM_MODE := arm
+else ifeq ($(TARGET_ARCH),x86)
+	LOCAL_CFLAGS += -D__STDC_CONSTANT_MACROS -O3 -fno-pic -DANDROID
+    LOCAL_STATIC_LIBRARIES += avutil_asm avfilter_asm 
+else ifeq ($(TARGET_ARCH),mips)
+	LOCAL_CFLAGS += -D__STDC_CONSTANT_MACROS -O3 -DANDROID -Wfatal-errors -Wno-deprecated -std=c99 -fomit-frame-pointer -mips32r2 -mdsp -mdspr2 -mhard-float -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wno-format-zero-length -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wno-pointer-to-int-cast -Wstrict-prototypes -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=missing-prototypes -Werror=return-type -Werror=vla
+endif
+
+include $(BUILD_SHARED_LIBRARY)
+################################################################################
+# собираем модуль FFmpeg avdevice.so
+include $(CLEAR_VARS)
+
+LIBAVDEVICE_LIB_ARCH_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavdevice/$(TARGET_ARCH)/*.asm)
+LIBAVDEVICE_LIB_ARCH_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavdevice/$(TARGET_ARCH)/*.c)
+LIBAVDEVICE_LIB_ARCH_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavdevice/$(TARGET_ARCH)/*.S)
+LIBAVDEVICE_LIB_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavdevice/*.asm)
+LIBAVDEVICE_LIB_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavdevice/*.c)
+LIBAVDEVICE_LIB_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavdevice/*.S)
+LIBAVDEVICE_LIB_CPP_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavdevice/*.cpp)
+
+LIBAVDEVICE_LIB_ARCH_ASM_FILES := $(subst jni/,,$(LIBAVDEVICE_LIB_ARCH_ASM_FILES))
+LIBAVDEVICE_LIB_ARCH_C_FILES := $(subst jni/,,$(LIBAVDEVICE_LIB_ARCH_C_FILES))
+LIBAVDEVICE_LIB_ARCH_S_FILES := $(subst jni/,,$(LIBAVDEVICE_LIB_ARCH_S_FILES))
+LIBAVDEVICE_LIB_ASM_FILES := $(subst jni/,,$(LIBAVDEVICE_LIB_ASM_FILES))
+LIBAVDEVICE_LIB_C_FILES := $(subst jni/,,$(LIBAVDEVICE_LIB_C_FILES))
+LIBAVDEVICE_LIB_S_FILES := $(subst jni/,,$(LIBAVDEVICE_LIB_S_FILES))
+LIBAVDEVICE_LIB_CPP_FILES := $(subst jni/,,$(LIBAVDEVICE_LIB_CPP_FILES))
+
+include  $(LOCAL_PATH)/libavdevice_ignore.mk
+
+LIBAVDEVICE_FILES := $(sort $(LIBAVDEVICE_LIB_ARCH_ASM_FILES)) $(sort $(LIBAVDEVICE_LIB_ARCH_C_FILES)) $(sort $(LIBAVDEVICE_LIB_ARCH_S_FILES)) $(sort $(LIBAVDEVICE_LIB_ASM_FILES)) $(sort $(LIBAVDEVICE_LIB_C_FILES)) $(sort $(LIBAVDEVICE_LIB_S_FILES)) $(sort $(LIBAVDEVICE_LIB_CPP_FILES))
+
+LOCAL_SRC_FILES := $(LIBAVDEVICE_FILES)
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FFMPEG_DIR) $(LOCAL_PATH)/$(FFMPEG_DIR)/libavdevice $(LOCAL_PATH)/$(FFMPEG_DIR)/libavdevice/$(TARGET_ARCH)
+LOCAL_LDLIBS += -lz -llog
+LOCAL_SHARED_LIBRARIES += libavutil libavcodec libavformat libavfilter
+LOCAL_MODULE := avdevice
+ifeq ($(TARGET_ARCH),arm)
+    LOCAL_CFLAGS += -O3 -fpic -DANDROID
+    LOCAL_ARM_MODE := arm
+else ifeq ($(TARGET_ARCH),x86)
+	LOCAL_CFLAGS += -O3 -fpic -DANDROID
+else ifeq ($(TARGET_ARCH),mips)
+	LOCAL_CFLAGS += -O3 -DANDROID -Wfatal-errors -Wno-deprecated -std=c99 -fomit-frame-pointer -mips32r2 -mdsp -mdspr2 -mhard-float -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wno-format-zero-length -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wno-pointer-to-int-cast -Wstrict-prototypes -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=missing-prototypes -Werror=return-type -Werror=vla
+endif
+
+include $(BUILD_SHARED_LIBRARY)
+################################################################################
+# собираем ffmpeg.exe программу как *.so файл
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES  := $(subst jni/,,$(LOCAL_PATH)/$(FFMPEG_DIR)/cmdutils.c) $(subst jni/,,$(LOCAL_PATH)/$(FFMPEG_DIR)/ffmpeg.c) $(subst jni/,,$(LOCAL_PATH)/$(FFMPEG_DIR)/ffmpeg_opt.c) $(subst jni/,,$(LOCAL_PATH)/$(FFMPEG_DIR)/ffmpeg_filter.c)
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FFMPEG_DIR) $(OPENCVROOT)/sdk/native/jni/include
+LOCAL_LDLIBS += -llog -ldl
+LOCAL_SHARED_LIBRARIES += libavcodec libavfilter libavformat libavresample libavutil libpostproc libswresample libswscale libopencv_java
+LOCAL_MODULE := ffmpeg
+ifeq ($(TARGET_ARCH),arm)
+    LOCAL_CFLAGS += -D__STDC_CONSTANT_MACROS -O3 -DANDROID -DCONFIG_ARM_ARCH -fpic
+    LOCAL_ARM_MODE := arm
+else ifeq ($(TARGET_ARCH),x86)
+	LOCAL_CFLAGS += -D__STDC_CONSTANT_MACROS -O3 -DANDROID -DCONFIG_X86_ARCH -fpic
+else ifeq ($(TARGET_ARCH),mips)
+	LOCAL_CFLAGS += -D__STDC_CONSTANT_MACROS -O3 -DANDROID -Wfatal-errors -Wno-deprecated -std=c99 -fomit-frame-pointer -mips32r2 -mdsp -mdspr2 -mhard-float -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wno-format-zero-length -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wno-pointer-to-int-cast -Wstrict-prototypes -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=return-type -Werror=vla
+endif
+
+include $(BUILD_SHARED_LIBRARY)
+ Application.mk - настраиваем целевую платформу # говорим, в каком виде будем использовать STL
+APP_STL := gnustl_static
+# общие для всех флаги
+APP_CPPFLAGS := -frtti -fexceptions
+# можно собрать для каждой архитектуры вместе, перечислив через пробел, например: "APP_ABI := armeabi x86 mips"
+# но здесь мы собираем отдельно для каждой архитектуры
+APP_ABI := armeabi
+# APP_ABI := x86
+# APP_ABI := mips
+APP_PLATFORM := android-9
+ libavfilter_ignore.mk - пример одного из подключаемых файлов в котором прописаны файлы, которые не должны компилироваться # игнорируем следующие файлы: af_ladspa.c, asrc_flite.c, deshake_opencl.c, f_zmq.c, unsharp_opencl.c, unsharp_opencl_kernel.c, vf_drawtext.c, vf_frei0r.c, vf_libopencv.c, vf_subtitles.c, vf_vidstabdetect.c, vf_vidstabtransform.c, vidstabutils.c
+
+LIBAVFILTER_LIB_FILEPATH_af_ladspa_c := $(FFMPEG_DIR)/libavfilter/af_ladspa.c
+LIBAVFILTER_LIB_C_FILES := $(subst $(LIBAVFILTER_LIB_FILEPATH_af_ladspa_c),,$(LIBAVFILTER_LIB_C_FILES))
+
+LIBAVFILTER_LIB_FILEPATH_asrc_flite_c := $(FFMPEG_DIR)/libavfilter/asrc_flite.c
+LIBAVFILTER_LIB_C_FILES := $(subst $(LIBAVFILTER_LIB_FILEPATH_asrc_flite_c),,$(LIBAVFILTER_LIB_C_FILES))
+
+LIBAVFILTER_LIB_FILEPATH_deshake_opencl_c := $(FFMPEG_DIR)/libavfilter/deshake_opencl.c
+LIBAVFILTER_LIB_C_FILES := $(subst $(LIBAVFILTER_LIB_FILEPATH_deshake_opencl_c),,$(LIBAVFILTER_LIB_C_FILES))
+
+LIBAVFILTER_LIB_FILEPATH_f_zmq_c := $(FFMPEG_DIR)/libavfilter/f_zmq.c
+LIBAVFILTER_LIB_C_FILES := $(subst $(LIBAVFILTER_LIB_FILEPATH_f_zmq_c),,$(LIBAVFILTER_LIB_C_FILES))
+
+LIBAVFILTER_LIB_FILEPATH_unsharp_opencl_c := $(FFMPEG_DIR)/libavfilter/unsharp_opencl.c
+LIBAVFILTER_LIB_C_FILES := $(subst $(LIBAVFILTER_LIB_FILEPATH_unsharp_opencl_c),,$(LIBAVFILTER_LIB_C_FILES))
+
+LIBAVFILTER_LIB_FILEPATH_unsharp_opencl_kernel_c := $(FFMPEG_DIR)/libavfilter/unsharp_opencl_kernel.c
+LIBAVFILTER_LIB_C_FILES := $(subst $(LIBAVFILTER_LIB_FILEPATH_unsharp_opencl_kernel_c),,$(LIBAVFILTER_LIB_C_FILES))
+
+LIBAVFILTER_LIB_FILEPATH_vf_drawtext_c := $(FFMPEG_DIR)/libavfilter/vf_drawtext.c
+LIBAVFILTER_LIB_C_FILES := $(subst $(LIBAVFILTER_LIB_FILEPATH_vf_drawtext_c),,$(LIBAVFILTER_LIB_C_FILES))
+
+LIBAVFILTER_LIB_FILEPATH_vf_frei0r_c := $(FFMPEG_DIR)/libavfilter/vf_frei0r.c
+LIBAVFILTER_LIB_C_FILES := $(subst $(LIBAVFILTER_LIB_FILEPATH_vf_frei0r_c),,$(LIBAVFILTER_LIB_C_FILES))
+
+LIBAVFILTER_LIB_FILEPATH_vf_libopencv_c := $(FFMPEG_DIR)/libavfilter/vf_libopencv.c
+LIBAVFILTER_LIB_C_FILES := $(subst $(LIBAVFILTER_LIB_FILEPATH_vf_libopencv_c),,$(LIBAVFILTER_LIB_C_FILES))
+
+LIBAVFILTER_LIB_FILEPATH_vf_subtitles_c := $(FFMPEG_DIR)/libavfilter/vf_subtitles.c
+LIBAVFILTER_LIB_C_FILES := $(subst $(LIBAVFILTER_LIB_FILEPATH_vf_subtitles_c),,$(LIBAVFILTER_LIB_C_FILES))
+
+LIBAVFILTER_LIB_FILEPATH_vf_vidstabdetect_c := $(FFMPEG_DIR)/libavfilter/vf_vidstabdetect.c
+LIBAVFILTER_LIB_C_FILES := $(subst $(LIBAVFILTER_LIB_FILEPATH_vf_vidstabdetect_c),,$(LIBAVFILTER_LIB_C_FILES))
+
+LIBAVFILTER_LIB_FILEPATH_vf_vidstabtransform_c := $(FFMPEG_DIR)/libavfilter/vf_vidstabtransform.c
+LIBAVFILTER_LIB_C_FILES := $(subst $(LIBAVFILTER_LIB_FILEPATH_vf_vidstabtransform_c),,$(LIBAVFILTER_LIB_C_FILES))
+
+LIBAVFILTER_LIB_FILEPATH_vidstabutils_c := $(FFMPEG_DIR)/libavfilter/vidstabutils.c
+LIBAVFILTER_LIB_C_FILES := $(subst $(LIBAVFILTER_LIB_FILEPATH_vidstabutils_c),,$(LIBAVFILTER_LIB_C_FILES))
+ yasm_compile_asm_libavfilter.bat - пример bat-скрипта, который компилирует *.asm файлы для x86 REM компилируем *.asm файлы libavfilter, этот скрипт надо положить в папку 'libavfilter\x86'
+REM "-f elf" используется, чтобы избежать "error: binary object format does not support external references"
+REM значения -D флагов взяты из файлы config.h
+"D:\yasm\yasm-1.3.0-win64.exe" -f elf -D ARCH_X86_64=0 -D HAVE_ALIGNED_STACK=1 -D ARCH_X86_32=1 -D HAVE_CPUNOP=1 -D HAVE_AVX_EXTERNAL=1 -I D:\MyProject\jni\ffmpeg-2.1.3 -o af_volume.o af_volume.asm
+"D:\yasm\yasm-1.3.0-win64.exe" -f elf -D ARCH_X86_64=0 -D HAVE_ALIGNED_STACK=1 -D ARCH_X86_32=1 -D HAVE_CPUNOP=1 -D HAVE_AVX_EXTERNAL=1 -I D:\MyProject\jni\ffmpeg-2.1.3 -o vf_gradfun.o vf_gradfun.asm
+"D:\yasm\yasm-1.3.0-win64.exe" -f elf -D ARCH_X86_64=0 -D HAVE_ALIGNED_STACK=1 -D ARCH_X86_32=1 -D HAVE_CPUNOP=1 -D HAVE_AVX_EXTERNAL=1 -I D:\MyProject\jni\ffmpeg-2.1.3 -o vf_hqdn3d.o vf_hqdn3d.asm
+"D:\yasm\yasm-1.3.0-win64.exe" -f elf -D ARCH_X86_64=0 -D HAVE_ALIGNED_STACK=1 -D ARCH_X86_32=1 -D HAVE_CPUNOP=1 -D HAVE_AVX_EXTERNAL=1 -I D:\MyProject\jni\ffmpeg-2.1.3 -o vf_pullup.o vf_pullup.asm
+"D:\yasm\yasm-1.3.0-win64.exe" -f elf -D ARCH_X86_64=0 -D HAVE_ALIGNED_STACK=1 -D ARCH_X86_32=1 -D HAVE_CPUNOP=1 -D HAVE_AVX_EXTERNAL=1 -I D:\MyProject\jni\ffmpeg-2.1.3 -o vf_yadif.o vf_yadif.asm
+"D:\yasm\yasm-1.3.0-win64.exe" -f elf -D ARCH_X86_64=0 -D HAVE_ALIGNED_STACK=1 -D ARCH_X86_32=1 -D HAVE_CPUNOP=1 -D HAVE_AVX_EXTERNAL=1 -I D:\MyProject\jni\ffmpeg-2.1.3 -o yadif-10.o yadif-10.asm
+"D:\yasm\yasm-1.3.0-win64.exe" -f elf -D ARCH_X86_64=0 -D HAVE_ALIGNED_STACK=1 -D ARCH_X86_32=1 -D HAVE_CPUNOP=1 -D HAVE_AVX_EXTERNAL=1 -I D:\MyProject\jni\ffmpeg-2.1.3 -o yadif-16.o yadif-16.asm
+
+"D:\ndk\android-ndk-r9c\toolchains\x86-4.6\prebuilt\windows-x86_64\bin\i686-linux-android-ar.exe" rvs libavfilter_asm.a af_volume.o vf_gradfun.o vf_hqdn3d.o vf_pullup.o vf_yadif.o yadif-10.o yadif-16.o
+
+mkdir "D:\MyProject\obj\local\x86\objs\avfilter\ffmpeg-2.1.3\libavfilter\x86"
+move libavfilter_asm.a "D:\MyProject\obj\local\x86\objs\avfilter\ffmpeg-2.1.3\libavfilter\x86\"
+
+del *.o
+ Android.mk - пример make-файла, где компилируется только один модуль avfilter, остальные *.so - файлы просто копируются ################################################################################
+LOCAL_PATH := $(call my-dir)
+FFMPEG_DIR := ffmpeg-2.1.3
+
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libavutil
+LOCAL_SRC_FILES := ../prebuild/armeabi/release/libavutil.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libavcodec
+LOCAL_SRC_FILES := ../prebuild/armeabi/release/libavcodec.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libavformat
+LOCAL_SRC_FILES := ../prebuild/armeabi/release/libavformat.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libswscale
+LOCAL_SRC_FILES := ../prebuild/armeabi/release/libswscale.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libpostproc
+LOCAL_SRC_FILES := ../prebuild/armeabi/release/libpostproc.so
+ 
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libswresample
+LOCAL_SRC_FILES := ../prebuild/armeabi/release/libswresample.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libavresample
+LOCAL_SRC_FILES := ../prebuild/armeabi/release/libavresample.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+OPENCV_CAMERA_MODULES := off
+OPENCV_INSTALL_MODULES := on
+
+include $(OPENCVROOT)/sdk/native/jni/OpenCV.mk
+################################################################################
+# компилируем только модуль avfilter.so
+include $(CLEAR_VARS)
+
+LIBAVFILTER_LIB_ARCH_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/$(TARGET_ARCH)/*.asm)
+LIBAVFILTER_LIB_ARCH_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/$(TARGET_ARCH)/*.c)
+LIBAVFILTER_LIB_ARCH_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/$(TARGET_ARCH)/*.S)
+LIBAVFILTER_LIB_ASM_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/*.asm)
+LIBAVFILTER_LIB_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/*.c)
+LIBAVFILTER_LIB_S_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/*.S)
+LIBAVFILTER_LIB_CPP_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/*.cpp)
+LIBAVFILTER_LIB_EX_C_FILES := $(wildcard $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/libmpcodecs/*.c)
+
+LIBAVFILTER_LIB_ARCH_ASM_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_ARCH_ASM_FILES))
+LIBAVFILTER_LIB_ARCH_C_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_ARCH_C_FILES))
+LIBAVFILTER_LIB_ARCH_S_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_ARCH_S_FILES))
+LIBAVFILTER_LIB_ASM_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_ASM_FILES))
+LIBAVFILTER_LIB_C_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_C_FILES))
+LIBAVFILTER_LIB_S_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_S_FILES))
+LIBAVFILTER_LIB_CPP_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_CPP_FILES))
+LIBAVFILTER_LIB_EX_C_FILES := $(subst jni/,,$(LIBAVFILTER_LIB_EX_C_FILES))
+
+include  $(LOCAL_PATH)/libavfilter_ignore.mk
+
+LIBAVFILTER_FILES := $(sort $(LIBAVFILTER_LIB_ARCH_ASM_FILES)) $(sort $(LIBAVFILTER_LIB_ARCH_C_FILES)) $(sort $(LIBAVFILTER_LIB_ARCH_S_FILES)) $(sort $(LIBAVFILTER_LIB_ASM_FILES)) $(sort $(LIBAVFILTER_LIB_C_FILES)) $(sort $(LIBAVFILTER_LIB_S_FILES)) $(sort $(LIBAVFILTER_LIB_CPP_FILES)) $(sort $(LIBAVFILTER_LIB_EX_C_FILES))
+
+LOCAL_SRC_FILES := $(LIBAVFILTER_FILES)
+LOCAL_C_INCLUDES += $(OPENCVROOT)/sdk/native/jni/include $(LOCAL_PATH)/$(FFMPEG_DIR) $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/$(TARGET_ARCH) $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/libmpcodecs $(LOCAL_PATH)/$(FFMPEG_DIR)/libavfilter/libmpcodecs/libvo
+LOCAL_LDLIBS += -lz -llog
+LOCAL_SHARED_LIBRARIES += libavutil libavcodec libavformat libswresample libpostproc libswscale libavresample libopencv_java
+LOCAL_MODULE := avfilter
+LOCAL_CFLAGS += -D__STDC_CONSTANT_MACROS -O3 -fpic -DANDROID
+LOCAL_ARM_MODE := arm
+
+include $(BUILD_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libavdevice
+LOCAL_SRC_FILES := ../prebuild/armeabi/release/libavdevice.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES  := $(subst jni/,,$(LOCAL_PATH)/$(FFMPEG_DIR)/cmdutils.c) $(subst jni/,,$(LOCAL_PATH)/$(FFMPEG_DIR)/ffmpeg.c) $(subst jni/,,$(LOCAL_PATH)/$(FFMPEG_DIR)/ffmpeg_opt.c) $(subst jni/,,$(LOCAL_PATH)/$(FFMPEG_DIR)/ffmpeg_filter.c)
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FFMPEG_DIR) $(OPENCVROOT)/sdk/native/jni/include
+LOCAL_LDLIBS += -llog -ldl
+LOCAL_SHARED_LIBRARIES += libavcodec libavfilter libavformat libavresample libavutil libpostproc libswresample libswscale libopencv_java
+LOCAL_CFLAGS += -D__STDC_CONSTANT_MACROS -O3 -DANDROID -DCONFIG_ARM_ARCH -fpic
+LOCAL_MODULE := ffmpeg
+LOCAL_ARM_MODE := arm
+
+include $(BUILD_SHARED_LIBRARY)
+ Эти make-файлы надо положить в папку «jni». В результате структура проекта будет выглядеть примерно как на картинке: Момент истины. Нажимаем Project Build, и если все хорошо, то через некоторое время (у меня около часа) в папке «libs» проекта должны появиться папки с названиями архитектур и заветные *.so файлы (обратите внимание на файл libopencv_java.so — это файл который был сгенерирован подключенным скриптом OpenCV.mk и файл libffmpeg.so – это файл программы ffmpeg.exe, который мы собрали как *.so файл): Обязательно сохраните в отдельной папке эти *.so файлы, потом их можно будет повторно использовать в случае когда надо будет изменить код только в одном модуле. 4. Используем FFmpeg модули в Android приложении Если у вас получилось сгенерировать *.so файлы, то пора попробовать их подключить к Android приложению. Можно конечно это сделать в этом же проекте, но будет лучше создать новый. Последовательность действий для этого аналогична созданию проекта, где мы собирали FFmpeg (и не забываем про статью «OpenCV Introduction into Android Development»). Новый проект принципиально такой же, как и тот, в котором мы собирали FFmpeg файлы: там тоже будет папка jni, в которой будет лежать Android.mk и Application.mk, так же в ней будет лежать файл с кодом на C++ который будет вызывать функции из сгенерированных нами ранее *.so файлов. Но для начала начнем с Java-кода. Условимся, что у вас есть Activity, на котором есть кнопка, и все действия мы будем делать по нажатии на эту кнопку. Код обработчика нажатия кнопки // обратите внимание - имя пакета используется в названии C++ функции которая будет вызываться из Java кода
+package com.example.myproject;
+
+// обратите внимание - имя класса также используется в названии C++ функции которая будет вызываться из Java кода
+public class MyActivity
+{
+    <...>
+
+    // где-то в этом же файле надо объявить native-функцию, чтобы к ней можно было обращаться
+    private static native void nativeFFmpegTest();
+
+    <...>
+
+    public void OnClick()
+    {
+        // подгружаем *.so файлы, обратите внимание, что префикс "lib" не пишется!
+        System.loadLibrary("opencv_java");
+        System.loadLibrary("avutil");
+        System.loadLibrary("avcodec");
+        System.loadLibrary("avformat");
+        System.loadLibrary("avresample");
+        System.loadLibrary("postproc");
+        System.loadLibrary("swresample");
+        System.loadLibrary("swscale");
+        System.loadLibrary("avfilter");
+        System.loadLibrary("ffmpeg");
+        // этот *.so модуль, относится к текущему проекту смотрите Android.mk файл текущего проекта, там он создается
+        System.loadLibrary("myproject");
+    
+        // вызываем native-функцию, написанную на C++, которая в свою очередь содержит код обращения к FFmpeg
+        nativeFFmpegTest();
+    }
+}
+ Далее в папке «jni» создаем файл myproject.cpp со следующим содержимым: myproject.cpp #include <jni.h>
+#include <string.h>
+#include <algorithm>
+#include <android/log.h>
+
+// возможно здесь NDK будет ругаться, что файлы не найдены, вам необходимо прописать в Eclipse пути к этим заголовочным файлам, которые лежат в папке с кодом FFmpeg
+extern "C"
+{
+#include "libavcodec/avcodec.h"
+#include "libavformat/avformat.h"
+#include "libavutil/opt.h"
+#include "libswscale/swscale.h"
+#include "libavfilter/avfilter.h"
+#include "libavutil/log.h"
+#include "libavutil/imgutils.h"
+}
+
+// Extermal Functions Declaration
+extern "C"
+{
+    // помните, мы переименовали main() функцию в ffmpeg.c в ffmpeg_main() вот здесь она и декларируется
+    int ffmpeg_main(int argc, char **argv);
+}
+
+// JNI Functions Declarations
+extern "C"
+{
+    JNIEXPORT void JNICALL Java_com_example_myproject_MyActivity_nativeFFmpegTest(JNIEnv * _jenv, jclass _this);
+}
+
+JNIEXPORT void JNICALL Java_com_example_myproject_MyActivity_nativeFFmpegTest(JNIEnv * _jenv, jclass _this)
+{
+    int argc = 5;
+    // здесь путь к фидеофайлу может отличаться, запишите на видеокамеру что-ниубдь и пропишите здесь путь к этомй файлу
+    // FFmpeg поддерживает целую тучу кодеков и форматов, так что это не обязательно должен быть mp4
+    char* argv[5] = { "ffmpeg", "-i", "//storage//extSdCard//DCIM//Camera//video.mp4", "-an", "//storage//extSdCard//DCIM//Camera//video_no_audio.mp4"};
+
+    // вызов этой функции с такими аргументами это то же самое, как если бы вы запустили в консоли программу ffmpeg.exe с такими параметрами:
+    // > ffmpeg.exe -i "storage/extSdCard/DCIM/Camera/video.mp4" -an "storage/extSdCard/DCIM/Camera/video_no_audio.mp4"
+    // параметр -an говорит ffmpeg удалить аудио подток из файла, короче убрать звук и сохранить новый файл в video_no_audio.mp4
+    ffmpeg_main(argc, argv);
+}
+ Там же создаем файлы Android.mk и Application.mk: Application.mk APP_STL := gnustl_static
+APP_CPPFLAGS := -frtti -fexceptions
+APP_ABI := armeabi
+# APP_ABI := x86
+# APP_ABI := mips
+APP_PLATFORM := android-9
+ Android.mk ################################################################################
+LOCAL_PATH := $(call my-dir)
+
+# сперва мы копируем наши *.so файлы
+################################################################################
+include $(CLEAR_VARS)
+
+OPENCV_CAMERA_MODULES := off
+OPENCV_INSTALL_MODULES := on
+
+include $(OPENCVROOT)/sdk/native/jni/OpenCV.mk
+################################################################################
+include $(CLEAR_VARS)
+
+
+LOCAL_MODULE := libavcodec
+LOCAL_SRC_FILES := ../prebuild/ffmpeg/$(TARGET_ARCH)/release/libavcodec.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libavfilter
+LOCAL_SRC_FILES := ../prebuild/ffmpeg/$(TARGET_ARCH)/release/libavfilter.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libavformat
+LOCAL_SRC_FILES := ../prebuild/ffmpeg/$(TARGET_ARCH)/release/libavformat.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libavresample
+LOCAL_SRC_FILES := ../prebuild/ffmpeg/$(TARGET_ARCH)/release/libavresample.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libavutil
+LOCAL_SRC_FILES := ../prebuild/ffmpeg/$(TARGET_ARCH)/release/libavutil.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libpostproc
+LOCAL_SRC_FILES := ../prebuild/ffmpeg/$(TARGET_ARCH)/release/libpostproc.so
+ 
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libswresample
+LOCAL_SRC_FILES := ../prebuild/ffmpeg/$(TARGET_ARCH)/release/libswresample.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libswscale
+LOCAL_SRC_FILES := ../prebuild/ffmpeg/$(TARGET_ARCH)/release/libswscale.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libffmpeg
+LOCAL_SRC_FILES := ../prebuild/ffmpeg/$(TARGET_ARCH)/release/libffmpeg.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+################################################################################
+# компилируем myproject.cpp в libmyproject.so
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES  := myproject.cpp
+LOCAL_C_INCLUDES += $(LOCAL_PATH) $(FFMPEGANDROIDROOT) $(OPENCVROOT)/sdk/native/jni/include
+LOCAL_LDLIBS += -llog -ldl
+LOCAL_SHARED_LIBRARIES += libavcodec libavfilter libavformat libavresample libavutil libpostproc libswresample libswscale libopencv_java libffmpeg
+LOCAL_CFLAGS += -D__STDC_CONSTANT_MACROS -O3 -DANDROID
+ifeq ($(TARGET_ARCH),arm)
+	LOCAL_CFLAGS += -DCONFIG_ARM_ARCH -fpic
+else ifeq ($(TARGET_ARCH),x86)
+	LOCAL_CFLAGS += -DCONFIG_X86_ARCH -fpic
+else ifeq ($(TARGET_ARCH),mips)
+	LOCAL_CFLAGS += -DCONFIG_MIPS_ARCH -Wfatal-errors -Wno-deprecated -std=c99 -fomit-frame-pointer -mips32r2 -mdsp -mdspr2 -mhard-float -g -Wdeclaration-after-statement -Wall -Wno-parentheses -Wno-switch -Wno-format-zero-length -Wdisabled-optimization -Wpointer-arith -Wredundant-decls -Wno-pointer-sign -Wwrite-strings -Wtype-limits -Wundef -Wmissing-prototypes -Wno-pointer-to-int-cast -Wstrict-prototypes -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Werror=return-type -Werror=vla
+endif
+LOCAL_MODULE := myproject
+
+include $(BUILD_SHARED_LIBRARY)
+ Теперь надо записать на камеру телефона ролик со звуком, и сохранить его как «storage/extSdCard/DCIM/Camera/video.mp4», или пропишите другой путь в myproject.cpp. Все! Запускайте, нажимайте кнопку, и, если все было сделано правильно, рядом с исходным файлом video.mp4 должен появиться файл video_no_audio.mp4 без аудио потока. Если он появился, то FFmpeg под Android работает! 5. Интегрируем FFmpeg и OpenCV Итак, сейчас мы имеем рабочий FFmpeg и знаем, как его использовать в Java коде Android приложения, осталось каким-то образом прикрутить к FFmpeg OpenCV. Сразу говорю, ковырялся я в коде FFmpeg довольно долго. Нашел цикл, где декодируются и обрабатываются кадры из видео, изучил его от и до. Прикидывал, где все же вставить код, который вызывал бы функции OpenCV. Под конец совсем уж было отчаялся. И вдруг меня осенило — так ведь в FFmpeg есть видео фильтры! Фильтры — это модули, которые подключаются на этапе декодирования-кодирования, и им на обработку дается каждый кадр из видео потока. Как раз здесь и можно было бы вставить покадровую обработку видео потока. Сначала хотел написать свой собственный фильтр с конвертацией и OpenCV-вызовами функций. В нем смог бы обрабатывать каждый кадр видео. Но потом решил просто взять какой-нибудь уже готовый фильтр и изменить его код. Лучше всего мне подошел фильтр масштабирования, который находится в файле «ffmpeg-2.1.3\libavfilter\vf_scale.c», ведь моя задача — формировать кадры для видео на основе какой-нибудь картинки, размер которой может не совпадать с размером кадра видео. Например, пользователь выбрал картинку панды размером 300x300, а видео, где он вращает глазами, снял размером 640x480. Задача программы — наложить глаза из этого видео на картинку панды. Так вот, мысль взять фильтр масштабирования как раз решала эту проблему несоответствия размера кадра исходного видео и размера картинки, которая должна была заменить этот кадр собой. Я реализовал это, нагло обманув фильтр масштабирования. В аргументах через функцию ffmpeg_process() задавал ему такие параметры, чтобы он думал, что ему надо менять размер кадров видео с 640x480 до 300x300. Но вместо кода масштабирования я вставил код, где из кадра 640x480 вырезаются глаза, накладываются на картинку панды, которая 300x300. И дальше эту картинку панды с глазами записываем в буфер результирующего кадра, и фильтр кодирует этот кадр в видеопоток по всем правилам. Вот здесь как раз и возникает задача взаимодействия OpenCV и FFmpeg. Решается она так: если вы откроете файл vf_scale.c, то там будет функция filter_frame(). Эта функция и есть тот самый callback, который вызывается при обработке видео для каждого кадра. У нее есть аргумент «in» типа AVFrame* — это и есть декодированый кадр из видео. Нам надо этот кадр преобразовать в формат совместимый с OpenCV и обработать. Код взаимодействия FFmpeg с OpenCV // аргумент _in - кадр из исходного видео размером 640x480, аргумент _out - результирующий кадр размера 300x300
+void convertFFmpegAVFrameToOpenCVMat(AVFrame* _in, AVFrame* _out)
+{
+    // ширина кадра из видео (это 640 из нашего примера)
+    int videoFrameWidth = _in->width;
+    // высота кадра из видео (это 480 из нашего примера)
+    int videoFrameHeight = _in->height;
+    // это код формата кадра, его мы и будем конвертировать в формат AV_PIX_FMT_BGRA, который совместим с форматом OpenCV
+    int videoFrameFormat = _in->format;
+    
+    // SwsContext - это тип из FFmpeg который представляет собой контекст конвертации, мы настраиваем его таким образом, 
+    // чтобы он конвертировал видео кадр из формата videoFrameFormat в формат AV_PIX_FMT_BGRA
+    SwsContext* avFrameToMatConvertContext = NULL;
+    avFrameToMatConvertContext = sws_getCachedContext(avFrameToMatConvertContext, 
+                                                      videoFrameWidth, 
+                                                      videoFrameHeight, 
+                                                      (enum AVPixelFormat) videoFrameFormat, 
+                                                      videoFrameWidth,
+                                                      videoFrameHeight, 
+                                                      AV_PIX_FMT_BGRA, 
+                                                      SWS_BICUBIC, 
+                                                      NULL, 
+                                                      NULL, 
+                                                      NULL);
+    
+    // здесь мы создаем временный AVFrame* в который запишется кадр в формате AV_PIX_FMT_BGRA
+    AVFrame* avFrameWithOpenCVCompatibleData = av_frame_alloc();
+    // здесь мы высчитываем размер этого кадра (он зависит от формата и размера кадра)
+    int avFrameWithOpenCVCompatibleDataBufferSize = avpicture_get_size(AV_PIX_FMT_BGRA, videoFrameWidth, videoFrameHeight);
+    // создаем буфер для данных и передаем его в avFrameWithOpenCVCompatibleData
+    uint8_t* avFrameWithOpenCVCompatibleDataBuffer = (uint8_t *) av_malloc((uint64_t) (avFrameWithOpenCVCompatibleDataBufferSize * sizeof(uint8_t)));
+    avpicture_fill((AVPicture*) avFrameWithOpenCVCompatibleData, avFrameWithOpenCVCompatibleDataBuffer, AV_PIX_FMT_BGRA, videoFrameWidth, videoFrameHeight);
+    avFrameWithOpenCVCompatibleData->height = videoFrameWidth;
+    avFrameWithOpenCVCompatibleData->width = videoFrameHeight;
+
+    // здесь исходный кадр из _in конвертируется в формат AV_PIX_FMT_BGRA и записывается в переменную avFrameWithOpenCVCompatibleData 
+    sws_scale(avFrameToMatConvertContext, _in->data, _in->linesize, 0, _in->height, avFrameWithOpenCVCompatibleData->data, avFrameWithOpenCVCompatibleData->linesize);
+    // здесь создается долгожданный объект OpenCV Mat в котором находится кадр из FFmpeg AVFrame
+    cv::Mat* cvVideoFrame = new cv::Mat(avFrameWithOpenCVCompatibleData->height, avFrameWithOpenCVCompatibleData->width, CV_8UC4, avFrameWithOpenCVCompatibleData->data[0]);
+
+    // теперь с cvVideoFrame можно работать функциями OpenCV, 
+    // в контексте нашего примера работы программы Facegood, 
+    // именно здесь вырезаются из cvVideoFrame глаза и помещаются на картинку панды размером 300x300
+    cvResultFrame = cv::imread("panda_300x300.jpg", -1);
+    <вырезаем из cvVideoFrame глаза и накладываем их на cvResultFrame>
+        
+    // очищаемся, они нам больше не нужны
+    av_free(avFrameWithOpenCVCompatibleDataBuffer);
+    av_frame_free(&avFrameWithOpenCVCompatibleData);
+    delete cvVideoFrame;    
+    
+    // теперь надо записать cvResultFrame в _out
+    // для этого меняем формат cvResultFrame с BGRA на YUV_I420
+    cvtColor(cvResultFrame, cvResultFrame, CV_BGRA2YUV_I420);
+    
+    // и записываем данные с картинкой в AVFrame* _out
+    size_t imageYPlaneSize = _out->width * _out->height;
+    size_t imageUPlaneSize = imageYPlaneSize / 4;
+    size_t imageVPlaneSize = imageUPlaneSize;
+    int imageHalfWidth = _out->width / 2;
+    int imageHalfHeight = _out->height / 2;
+    for (int i = 0; i < _out->height; i++)
+    {
+        memcpy(_out->data[0] + i * _out->linesize[0], cvResultFrame.data + i * _out->width, _out->width);
+        if (i < imageHalfHeight)
+        {
+            memcpy(_out->data[1] + i * _out->linesize[1], cvResultFrame.data + imageYPlaneSize + i * imageHalfWidth, imageHalfWidth);
+            memcpy(_out->data[2] + i * _out->linesize[2], cvResultFrame.data + imageYPlaneSize + imageUPlaneSize + i * imageHalfWidth, imageHalfWidth);
+        }
+    }
+}
+ Вот и все! Дальше фильтр vf_scale закодирует кадр из _out правильным образом, и на выходе мы получим видеопоток, где вместо кадров исходного видео присутсвует картинка панды с вырезанными элементами из исходного видео (в данном случае два глаза и рот): Насчет производительности стоит отметить, что несмотря на то, что речь идет о покадровой обработке видео потока, то даже на средних телефонах создание ролика происходит за довольно приемлемое время — все же FFmpeg и OpenCV это очень мощные библиотеки. Заключение Я сам имею не очень удачный опыт компиляции FFmpeg по подобным статьям из интернета. Хотя я и хотел подробно все изложить, но вполне возможно, забыл про какие-то нюансы, заранее извиняюсь за это. Если вы попробовали скомпилировать FFmpeg по моей инструкции и где-то застряли — пишите, постараюсь найти время и исправить или дополнить эту статью согласно вашим замечаниям. Спасибо за внимание!

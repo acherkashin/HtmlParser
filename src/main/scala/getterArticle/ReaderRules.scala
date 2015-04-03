@@ -6,10 +6,12 @@ import scala.io.Source
 /**
  * Created by Александр on 29.03.2015.
  */
-object ReaderRules{
+case class KeyValue(key : String, value : String)
+
+class ReaderRules(nameFolder : String){
   private val fileName   = "Rules.json"
   private val homeDir    = System.getProperty("user.dir")
-  private val pathToFile = Paths.get(homeDir, fileName).toString
+  private val pathToFile = Paths.get(Paths.get(homeDir, nameFolder).toString, fileName).toString//в указанной папке ищем файл "Rules.json"
 
   private def getWordsByProperty(property : String): Array[String]={
      val source  = Source.fromFile(pathToFile)
@@ -27,10 +29,12 @@ object ReaderRules{
      arrayRequiredWords.toArray
    }
 
+  def getKeyValue() : KeyValue = { val array = getWordsByProperty("content"); KeyValue(array(0), array(1)) }
+
   def getWordsForHtmlItems(): Array[String] = getWordsByProperty("htmlItems")
 
   def getWordsForInvalidUrl(): Array[String] = getWordsByProperty("invalidUrl")
 
-  def getWordsForCheckUrl(): Array[String] = getWordsByProperty("checkUrl")
+  def getWordsForCheckUrl(): Array[String] = getWordsByProperty("prefCheckUrl")
 
 }

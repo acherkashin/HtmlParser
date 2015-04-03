@@ -1,5 +1,7 @@
 package getterArticle
 
+import java.io.FileWriter
+
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -12,16 +14,21 @@ import scala.collection.mutable._
 /**
  * Created by Александр on 15.03.2015.
  */
-class HtmlParser(strUrl: String){
-
+class HtmlParser(nameFolder : String){
   private val ID_HTMLITEM : Integer   = 1
   private val ID_INVALIDURL : Integer = 2
   private val ID_CHECKURL : Integer   = 3
 
+  private val readerRules = new ReaderRules(nameFolder)
+  private val wordsForHtmlItems = readerRules.getWordsForHtmlItems
+  private val wordsForInvalidUrl = readerRules.getWordsForInvalidUrl
+  private val wordsForCheckUrl = readerRules.getWordsForCheckUrl
+  private val keyValue = readerRules.getKeyValue
+
   def isInvalidUrl(url : String) : Boolean = {
     var isInvalid = false
 
-    for(elem <- HtmlParser.WordsForInvalidUrl if(isInvalid== false))
+    for(elem <- wordsForInvalidUrl if(isInvalid== false))
     {
       if(url.indexOf(elem) > 0)
         isInvalid = true
@@ -33,7 +40,7 @@ class HtmlParser(strUrl: String){
   def isCheckUrl(url : String):Boolean = {
     var isCheckUrl = true
 
-    for(elem<- HtmlParser.WordsForCheckUrl if(isCheckUrl == true))
+    for(elem<- wordsForCheckUrl if(isCheckUrl == true))
     {
       if(url.indexOf(elem) < 0)
         isCheckUrl = false
@@ -45,7 +52,7 @@ class HtmlParser(strUrl: String){
   def isHtmlItem(url : String):Boolean = {
     var isHtmlItem = false
 
-    for(elem<- HtmlParser.wordsForHtmlItems if(isHtmlItem == false))
+    for(elem<- wordsForHtmlItems if(isHtmlItem == false))
     {
       if(url.indexOf(elem) > 0 && ! url.endsWith(elem))//содержит, но не оканчивается
         isHtmlItem = true
@@ -72,12 +79,14 @@ class HtmlParser(strUrl: String){
     id
   }
 
-  def LoadHtmlItemFromPage(url : String) : (ArrayBuffer[HtmlItem], ArrayBuffer[String]) ={
-    println(url)
+  def LoadHtmlItemFromPage(strUrl : String) : Array[HtmlItem] ={
+    val logger = new Logger("article")
+    logger.write(s"Обработка страницы $strUrl")
+
     val HtmlItems = ArrayBuffer[HtmlItem]()
     val CheckUrls = ArrayBuffer[String]()
 
-    val doc: Document = Jsoup.connect(url).get
+    val doc: Document = Jsoup.connect(strUrl).get
     val elementsWithAttr: Elements = doc.getElementsByAttribute("href")
     val htmlItems: HashSet[HtmlItem] = new HashSet[HtmlItem]()
 
@@ -85,76 +94,25 @@ class HtmlParser(strUrl: String){
     for ( i <- 0 until size )////определяем валидность каждой ссылки
     {
       val element = elementsWithAttr.get(i)
-      val url  = element.attr("href")
+      val url  = element.attr("abs:href")
 
       val id = whatIsUrl(url)
 
       id match {
-        case ID_HTMLITEM =>  HtmlItems += HtmlItem.CreateHtmlItem(url)
+        case ID_HTMLITEM =>  HtmlItems += HtmlItem.CreateHtmlItem(url,keyValue)
         case ID_CHECKURL =>  CheckUrls += url
+//        case ID_INVALIDURL =>  {
+//                                  if(whatIsUrl(strUrl + url) == ID_HTMLITEM)
+//                                    HtmlItems += HtmlItem.CreateHtmlItem(strUrl + url,keyValue)
+//                                }
+
         case _ =>
       }
 
 
     }
 
-    (HtmlItems, CheckUrls)
+    HtmlItems.toArray
   }
 
-  private def copyArrayBuffer(arrBuffer : ArrayBuffer[String]): ArrayBuffer[String] = {
-    val newArrayBuffer = new ArrayBuffer[String]()
-
-    for(elem <-newArrayBuffer){
-      newArrayBuffer += new String(elem)
-    }
-
-    newArrayBuffer
-  }
-
-  def containsInArray(arrBuf : ArrayBuffer[String], url : String) : Boolean = {
-    var contains = false
-
-    for(elem <- arrBuf)
-      if(url == elem)
-        contains = true
-
-    contains
-  }
-
-
-  def getAllArticle(rootUrl : String) : Array[HtmlItem]={
-    var url = rootUrl
-    val pairArray = LoadHtmlItemFromPage(url)
-    val arrBufArticle  = pairArray._1 //адреса, которые нужно проверить
-    val arrBufCheckUrl = pairArray._2 //посещённые адреса
-    val arrBufOldUrl   = copyArrayBuffer(arrBufCheckUrl)
-
-    while( arrBufCheckUrl.length != 0 ){
-      try{
-          val index = arrBufCheckUrl.length - 1
-          url = arrBufCheckUrl.get(index)
-          arrBufCheckUrl.trimEnd(1)
-          val arrBufNewPair = LoadHtmlItemFromPage(url)
-          val newArticles = arrBufNewPair._1
-          //val newGetedUrls = arrBufNewPair._2
-
-          //val newUrls = newGetedUrls.filter(elem => ! containsInArray(arrBufOldUrl, elem))
-          //arrBufCheckUrl ++= newGetedUrls
-          arrBufArticle ++= newArticles
-        }
-      catch {
-         case _  => println("Ошибка")
-      }
-    }
-
-    arrBufOldUrl.foreach(elem => println(elem))
-    arrBufArticle.toArray
-  }
-
-}
-
-object HtmlParser{
-  val wordsForHtmlItems = ReaderRules.getWordsForHtmlItems
-  val WordsForInvalidUrl = ReaderRules.getWordsForInvalidUrl
-  val WordsForCheckUrl = ReaderRules.getWordsForCheckUrl
 }

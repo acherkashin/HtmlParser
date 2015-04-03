@@ -29,9 +29,9 @@ case class HtmlItem(url: String,title : String, description : String) {
 }
 
 object HtmlItem{
-  def CreateHtmlItem(url:String): HtmlItem = {
+  def CreateHtmlItem(url:String,keyValue: KeyValue): HtmlItem = {
     val doc: Document = Jsoup.connect(url).get
-    val elementsWithClass: Elements = doc.getElementsByAttributeValue("class","content html_format")
+    val elementsWithClass: Elements = doc.getElementsByAttributeValue(keyValue.key, keyValue.value)
     val strbDescription = new StringBuilder
 
     for (element <- elementsWithClass )

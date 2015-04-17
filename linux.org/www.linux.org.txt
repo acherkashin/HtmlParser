@@ -1,1 +1,0 @@
-https://www.linux.org.ru/

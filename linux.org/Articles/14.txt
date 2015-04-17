@@ -1,6 +1,0 @@
-url: https://www.linux.org.ru/news/hardware/
-
-title: Новости - Hardware and Drivers
-
-description:
-

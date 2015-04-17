@@ -1,6 +1,0 @@
-url: https://www.linux.org.ru/tag/javascript
-
-title: Javascript
-
-description:
-

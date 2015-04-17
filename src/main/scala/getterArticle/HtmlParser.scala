@@ -1,6 +1,7 @@
 package getterArticle
 
 import java.io.FileWriter
+import java.util.regex.Pattern
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -10,21 +11,46 @@ import scala.Int
 import scala.collection.JavaConversions._
 import scala.collection.immutable.Range.Int
 import scala.collection.mutable._
+import scala.io.Source
 
 /**
  * Created by Александр on 15.03.2015.
  */
-class HtmlParser(nameFolder : String){
-  private val ID_HTMLITEM : Integer   = 1
-  private val ID_INVALIDURL : Integer = 2
-  private val ID_CHECKURL : Integer   = 3
-
-  private val readerRules = new ReaderRules(nameFolder)
+class HtmlParser(readerRules : ReaderRules){
+  
+  //private val readerRules = new ReaderRules(nameFolder)
   private val wordsForHtmlItems = readerRules.getWordsForHtmlItems
   private val wordsForInvalidUrl = readerRules.getWordsForInvalidUrl
   private val wordsForCheckUrl = readerRules.getWordsForCheckUrl
-  private val keyValue = readerRules.getKeyValue
-  private val strUrl = readerRules.getURL
+  private val keyValueArticle = readerRules.getKeyValueArticle
+  private val keyValueDateTime = readerRules.getKeyValueDateTime
+  private val strUrl = readerRules.CurrentSite
+
+  private def getTimeOut(url :String) : Int ={
+    var timeOut = 15
+
+    try {
+      val robots = Source.fromURL(s"$url/robots.txt", "UTF-8").mkString
+      val regex = "User-agent: \\W\\sCrawl-delay: \\d+"
+      val pattern = Pattern.compile(regex)
+      val matcher = pattern.matcher(robots)
+
+      matcher.find()
+      val str = matcher.group()
+
+      val numberRegex = "[0-9]+"
+      val numberPattern = Pattern.compile("\\d+", Pattern.MULTILINE)
+      val numberMatcher = numberPattern.matcher(str)
+
+      numberMatcher.find()
+      timeOut = Integer.parseInt(numberMatcher.group())
+    }
+    catch {
+      case _ =>
+    }
+
+    timeOut
+  }
 
   def isInvalidUrl(url : String) : Boolean = {
     var isInvalid = false
@@ -55,54 +81,49 @@ class HtmlParser(nameFolder : String){
 
     for(elem<- wordsForHtmlItems if(isHtmlItem == false))
     {
-      if(url.indexOf(elem) > 0 && ! url.endsWith(elem))//содержит, но не оканчивается
+      if(url.indexOf(elem) > 0 && ! ( url.endsWith(elem) || url.endsWith(elem + "/") ))//содержит, но не оканчивается
         isHtmlItem = true
     }
 
     isHtmlItem
   }
 
-  // 1- yes , 2 - no, 3 -/
-  def whatIsUrl(url: String) : Integer ={
-    var id = 0
+  def isValidUrl(url: String) : Boolean ={
+    var valid = false
 
-    if(! isInvalidUrl(url))
-      if(isCheckUrl(url))
-        if(isHtmlItem(url))
-          id = ID_HTMLITEM
-        else
-          id = ID_CHECKURL
-      else
-        id = ID_INVALIDURL
-    else
-      id = ID_INVALIDURL
+    if(! isInvalidUrl(url) && isCheckUrl(url) && isHtmlItem(url))
+      valid = true
 
-    id
+    return valid;
+
   }
 
   def LoadHtmlItemFromPage() : Array[HtmlItem] ={
     val logger = new Logger("article")
     logger.write(s"Обработка страницы $strUrl")
 
+    val timeOut = getTimeOut(strUrl)*1000                   //простой страницы
     val HtmlItems = ArrayBuffer[HtmlItem]()
-    val CheckUrls = ArrayBuffer[String]()
 
     val doc: Document = Jsoup.connect(strUrl).get
     val elementsWithAttr: Elements = doc.getElementsByAttribute("href")
-    val htmlItems: HashSet[HtmlItem] = new HashSet[HtmlItem]()
 
     val size = elementsWithAttr.size
+    //обходим массивссылок
     for ( i <- 0 until size )////определяем валидность каждой ссылки
     {
       val element = elementsWithAttr.get(i)
       val url  = element.attr("abs:href")
+      try{
+        val valid = isValidUrl(url)
 
-      val id = whatIsUrl(url)
-
-      id match {
-        case ID_HTMLITEM =>  HtmlItems += HtmlItem.CreateHtmlItem(url,keyValue)
-        case ID_CHECKURL =>  CheckUrls += url
-        case _ =>
+        if(valid){
+          HtmlItems += HtmlItem.CreateHtmlItem(url, keyValueArticle, keyValueDateTime)
+          Thread.sleep(timeOut)
+        }
+      }
+      catch{
+        case e : Exception => logger.write(s"Ошибка обработки страницы:$url "+e.getMessage)
       }
     }
 

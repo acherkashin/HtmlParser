@@ -1,6 +1,0 @@
-url: https://www.linux.org.ru/news/commercial/
-
-title: Новости - Коммерческое ПО
-
-description:
-

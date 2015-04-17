@@ -1,6 +1,0 @@
-url: https://www.linux.org.ru/news/kernel/
-
-title: Новости - Ядро Linux
-
-description:
-

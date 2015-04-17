@@ -1,11 +1,14 @@
 package getterArticle
 
+import java.net.URL
 import java.util
+import java.util.regex.Pattern
 
 import getterArticle.HtmlItem
 import org.apache.commons.lang3.StringEscapeUtils
 
 import scala.collection.mutable.ArrayBuffer
+import scala.io.Source
 
 
 /**
@@ -13,23 +16,30 @@ import scala.collection.mutable.ArrayBuffer
  */
 object Starter {
   def main(args:Array[String]):Unit = {
-//    ReaderRules.getWordsForInvalidUrl().foreach(i => println(i))
-    //    ReaderRules.getWordsForCheckUrl.foreach(i => println(i))
-    try{
-      val parser1 = new HtmlParser("HabraHabr")
-      val array1 = parser1.LoadHtmlItemFromPage()
-        println(array1.size)
-        val articleWriter = new ArticleWriter("HabraHabr")
-          articleWriter.WriteToFiles(array1)
 
-        val parser2 = new HtmlParser("linux.org")
-        val array2 = parser2.LoadHtmlItemFromPage()
-        println(array2.size)
-        val articleWriter2 = new ArticleWriter("linux.org")
-        articleWriter2.WriteToFiles(array2)
-    }
-    catch {
-      case _  => println("Ошибка")
+    val logger = new Logger("article")
+
+    try {
+
+      val readerRules = new ReaderRules("rules.json")
+      val sizeArray = readerRules.CountSites
+
+      val bufferArticle = new ArrayBuffer[HtmlItem]()
+
+      for (i <- 0 until sizeArray) {
+        val parser = new HtmlParser(readerRules)
+        val array = parser.LoadHtmlItemFromPage()
+        logger.write("Количество статей: "+array.size.toString)
+
+        bufferArticle ++= array
+        readerRules.nextSite()
+      }
+
+      val articleWriter = new ArticleWriter()
+      articleWriter.WriteToFiles(bufferArticle.toArray)
+
+    }catch{
+      case e: Exception => logger.write(e.getMessage)
     }
 
 }

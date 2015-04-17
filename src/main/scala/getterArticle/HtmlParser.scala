@@ -99,12 +99,14 @@ class HtmlParser(readerRules : ReaderRules){
   }
 
   def LoadHtmlItemFromPage() : Array[HtmlItem] ={
-    val logger = new Logger("article")
-    logger.write(s"Обработка страницы $strUrl")
 
     val timeOut = getTimeOut(strUrl)*1000                   //простой страницы
-    val HtmlItems = ArrayBuffer[HtmlItem]()
 
+    val logger = new Logger("article")
+    logger.write(s"Обработка страницы $strUrl")
+    logger.write(s"TimeOut: $timeOut")
+
+    val HtmlItems = ArrayBuffer[HtmlItem]()
     val doc: Document = Jsoup.connect(strUrl).get
     val elementsWithAttr: Elements = doc.getElementsByAttribute("href")
 
@@ -119,7 +121,7 @@ class HtmlParser(readerRules : ReaderRules){
 
         if(valid){
           HtmlItems += HtmlItem.CreateHtmlItem(url, keyValueArticle, keyValueDateTime)
-          Thread.sleep(timeOut)
+          //Thread.sleep(timeOut)
         }
       }
       catch{

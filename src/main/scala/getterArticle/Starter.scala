@@ -21,18 +21,18 @@ object Starter {
 
     try {
 
-      val readerRules = new ReaderRules("rules.json")
-      val sizeArray = readerRules.CountSites
+      val readerConfigurations = new ReaderConfigurations("configuration.json")
+      val sizeArray = readerConfigurations.CountSites
 
       val bufferArticle = new ArrayBuffer[HtmlItem]()
 
       for (i <- 0 until sizeArray) {
-        val parser = new HtmlParser(readerRules)
+        val parser = new HtmlParser(readerConfigurations)
         val array = parser.LoadHtmlItemFromPage()
         logger.write("Количество статей: "+array.size.toString)
 
         bufferArticle ++= array
-        readerRules.nextSite()
+        readerConfigurations.nextSite()
       }
 
       val articleWriter = new ArticleWriter()

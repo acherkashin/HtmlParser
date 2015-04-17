@@ -8,7 +8,7 @@ import scala.io.Source
  */
 case class KeyValue(key : String, value : String)
 
-class ReaderRules(nameFile : String){
+class ReaderConfigurations(nameFile : String){
 
   private val homeDir    = System.getProperty("user.dir")
   private val pathToFile =  Paths.get(homeDir, nameFile).toString

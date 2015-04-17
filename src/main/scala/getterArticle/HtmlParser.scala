@@ -16,15 +16,15 @@ import scala.io.Source
 /**
  * Created by Александр on 15.03.2015.
  */
-class HtmlParser(readerRules : ReaderRules){
+class HtmlParser(readerConfigurations : ReaderConfigurations){
   
   //private val readerRules = new ReaderRules(nameFolder)
-  private val wordsForHtmlItems = readerRules.getWordsForHtmlItems
-  private val wordsForInvalidUrl = readerRules.getWordsForInvalidUrl
-  private val wordsForCheckUrl = readerRules.getWordsForCheckUrl
-  private val keyValueArticle = readerRules.getKeyValueArticle
-  private val keyValueDateTime = readerRules.getKeyValueDateTime
-  private val strUrl = readerRules.CurrentSite
+  private val wordsForHtmlItems = readerConfigurations.getWordsForHtmlItems
+  private val wordsForInvalidUrl = readerConfigurations.getWordsForInvalidUrl
+  private val wordsForCheckUrl = readerConfigurations.getWordsForCheckUrl
+  private val keyValueArticle = readerConfigurations.getKeyValueArticle
+  private val keyValueDateTime = readerConfigurations.getKeyValueDateTime
+  private val strUrl = readerConfigurations.CurrentSite
 
   private def getTimeOut(url :String) : Int ={
     var timeOut = 15

@@ -10,16 +10,16 @@ case class KeyValue(key : String, value : String)
 
 class ReaderConfigurations(nameFile : String){
 
-  private val homeDir    = System.getProperty("user.dir")
-  private val pathToFile =  Paths.get(homeDir, nameFile).toString
+  private val homeDir    = System.getProperty("user.dir")               //текущая дирректория
+  private val pathToFile =  Paths.get(homeDir, nameFile).toString       //путь к файлу с правилами
   private val jsonFile = getFileAsJson()
 
-  private val arraySites = this.getSites
-  private var currentSite = arraySites(0)
-  private var jsonCurrentRules = getRulesForCurrentSite()
+  private val arraySites = this.getSites                                //массив с просматриваемыми сайтами
+  private var currentSite = arraySites(0)                               //Текущий сайт
+  private var jsonCurrentRules = getRulesForCurrentSite()               //правила для текущего сайта
 
-  private var currentIndexOfSite = 0
-  private var countSites = arraySites.length
+  private var currentIndexOfSite = 0                                    //Индекс текущего сайта в массиве
+  private val countSites = arraySites.length                            //Общее количество сайтов
 
   //Общий метод для считывания правил
   private def getWordsByProperty(property : String): Array[String]={
@@ -64,7 +64,7 @@ class ReaderConfigurations(nameFile : String){
   def nextSite(): Boolean = {
     var result = true
 
-    if(hasNextSite()){
+    if(this.hasNextSite()){
       currentIndexOfSite += 1
       currentSite = arraySites(currentIndexOfSite)
       jsonCurrentRules = getRulesForCurrentSite()

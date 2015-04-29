@@ -9,24 +9,10 @@
 
 							  "prefCheckUrl" : [ "http:\/\/habrahabr.ru"],//строки, которые должны содержать все ссылки
 
-							  "htmlItems" : [ "top",
-								              "post",
-											  "blog"
+							  "htmlItems" : [ "top", "post", "blog"], //строки,одну из которых, должны содержать ссылки на статьи
 
-							  ], //строки,одну из которых, должны содержать ссылки на статьи
-
-							  "invalidUrl" : [   ".jpg", //строки, которые не должны содержаться в ссылках
-								".css",
-								".jpg",
-								".png",
-								"\/user",
-								"\/register"
-							  ,"\/auth",
-								"\/login",
-								"#",
-								"posts\/top"
-							  ]
-							},
+							  "invalidUrl" : [   ".jpg", ".css", ".jpg", ".png", "\/user", "\/register","\/auth", "\/login", "#", "posts\/top"]
+							},//строки, которые не должны содержаться в ссылках
 
   "https:\/\/www.linux.org.ru" : {
 									"dateTime" : ["itemprop", "dateCreated"],
@@ -35,29 +21,9 @@
 
 									"prefCheckUrl" : [ "https:\/\/www.linux.org.ru\/"],//строки, которые должны содержать все ссылки
 
-									"htmlItems" : [ "opensource",
-													"commercial",
-													"conference",
-													"hardware",
-													"android",
-													"kernel",
-													"multimedia",
-													"debian",
-													"mozila",
-													"java",
-													"internet",
-													"games" ], //строки,одну из которых, должны содержать ссылки на статьи
+									"htmlItems" : [ "opensource", "commercial", "conference", "hardware", "android", "kernel", "multimedia",
+													"debian", "mozila", "java", "internet", "games" ], //строки,одну из которых, должны содержать ссылки на статьи
 
-									"invalidUrl" : [   ".jpg", //строки, которые не должны содержаться в ссылках
-														".css",
-														".jpg",
-														".png",
-														"\/user",
-														"\/register",
-													  "\/auth",
-														"\/login",
-														"#",
-									  					"forum"
-													  ]
+									"invalidUrl" : [   ".jpg", ".css", ".jpg", ".png", "\/user", "\/register", "\/auth", "\/login", "#", "forum"]
 								  }
 }

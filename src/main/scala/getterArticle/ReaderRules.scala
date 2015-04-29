@@ -21,6 +21,56 @@ class ReaderConfigurations(nameFile : String){
   private var currentIndexOfSite = 0                                    //Индекс текущего сайта в массиве
   private val countSites = arraySites.length                            //Общее количество сайтов
 
+  private var currentIndexOfPage = 0                                    //Индекс текущей страницы
+  private var pagesOfCurrentSite : Array[String] = this.getPagesOfCurrentSites //Массив страниц
+  private var currentPage: String = this.getDefaultPage                 //Текущая страница
+  private var countPages  = this.getCountPages                          // Количество страниц
+
+  //----------------------------------------------Функции для работы со страницами-------------------------------------
+  def getPagesOfCurrentSites()={
+    val jsArrPages = getRulesForCurrentSite().get("pages").getAsJsonArray
+
+    val size = jsArrPages.size()
+    val arrayRequiredWords = for( i <- 0 until size ) yield {
+      jsArrPages.get(i).getAsString
+    }
+
+    arrayRequiredWords.toArray
+  }
+
+  private def hasNextPage(): Boolean ={
+    var hasNext = false
+    val newIndex = currentIndexOfPage + 1
+
+    if( newIndex < countPages)
+      hasNext = true
+
+    hasNext
+  }
+
+  def nextPage(): Boolean = {
+    var result = true
+
+    if(this.hasNextPage()){
+      currentIndexOfPage += 1
+      currentPage = pagesOfCurrentSite(currentIndexOfPage)
+    }else
+      result = false
+
+    result
+  }
+
+  def setCountPages(count : Int)  = { this.countPages = count }
+
+  def getCountPages() = { pagesOfCurrentSite.length }
+
+  def getDefaultPage()  = {  this.pagesOfCurrentSite(0) }  //Страница по умолчанию, нулевой элемент массива "pagesOfCurrentSite"
+
+  //def setCurrentPage(page : String) ={ this.currentPage = page }
+
+  def getCurrentPage() = { currentPage }
+  //-------------------------------------------------------------------------------------------------------------------
+
   //Общий метод для считывания правил
   private def getWordsByProperty(property : String): Array[String]={
 
@@ -68,6 +118,12 @@ class ReaderConfigurations(nameFile : String){
       currentIndexOfSite += 1
       currentSite = arraySites(currentIndexOfSite)
       jsonCurrentRules = getRulesForCurrentSite()
+
+      currentIndexOfPage = 0                                    //сбрасываем текущий индекс
+      pagesOfCurrentSite = this.getPagesOfCurrentSites          //загружаем перечень страниц для установленного сайта
+      countPages = this.getCountPages                           //получаем количество страниц
+      currentPage = this.getDefaultPage                         //устанавливаем страницу по умолчанию
+
     }else
       result = false
 
@@ -76,11 +132,11 @@ class ReaderConfigurations(nameFile : String){
 
   //Метод для получения массива сайтов
   def getSites : Array[String] = {
-    val jsonArrayRequiredWords = jsonFile.get("sites").getAsJsonArray
+    val jsArrSites = jsonFile.get("sites").getAsJsonArray
 
-    val size = jsonArrayRequiredWords.size()
+    val size = jsArrSites.size()
     val arrayRequiredWords = for( i <- 0 until size ) yield {
-      jsonArrayRequiredWords.get(i).getAsString
+      jsArrSites.get(i).getAsString
     }
 
     arrayRequiredWords.toArray
@@ -99,5 +155,7 @@ class ReaderConfigurations(nameFile : String){
   def getWordsForInvalidUrl(): Array[String] = getWordsByProperty("invalidUrl")
 
   def getWordsForCheckUrl(): Array[String] = getWordsByProperty("prefCheckUrl")
+
+  def getPages(): Array[String] = getWordsByProperty("pages")
 
 }

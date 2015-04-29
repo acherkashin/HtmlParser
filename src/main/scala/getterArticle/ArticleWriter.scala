@@ -26,10 +26,10 @@ class ArticleWriter() {
     val pathToFile = Paths.get(pathToDirectory, fileName).toString
 
     val file = new File(pathToFile)
-    file.createNewFile()//Создаём файл
+    file.createNewFile()                    //Создаём файл
     val wrt = new FileWriter(file)
-    val text = htmlItem.toJson//производим запись в файл
-    wrt.append(text)
+    val text = htmlItem.toString
+    wrt.append(text)                        //Записываем в файл
 
     wrt.close()
   }

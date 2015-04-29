@@ -24,7 +24,7 @@ class HtmlParser(readerConfigurations : ReaderConfigurations){
   private val wordsForCheckUrl = readerConfigurations.getWordsForCheckUrl
   private val keyValueArticle = readerConfigurations.getKeyValueArticle
   private val keyValueDateTime = readerConfigurations.getKeyValueDateTime
-  private val strUrl = readerConfigurations.CurrentSite
+  private val strUrl = readerConfigurations.getCurrentPage
 
   private def getTimeOut(url :String) : Int ={
     var timeOut = 15
@@ -102,7 +102,7 @@ class HtmlParser(readerConfigurations : ReaderConfigurations){
 
     val timeOut = getTimeOut(strUrl)*1000                   //простой страницы
 
-    val logger = new Logger("article")
+    val logger = new Logger("article")                      //записываем в лог
     logger.write(s"Обработка страницы $strUrl")
     logger.write(s"TimeOut: $timeOut")
 
@@ -111,8 +111,8 @@ class HtmlParser(readerConfigurations : ReaderConfigurations){
     val elementsWithAttr: Elements = doc.getElementsByAttribute("href")
 
     val size = elementsWithAttr.size
-    //обходим массивссылок
-    for ( i <- 0 until size )////определяем валидность каждой ссылки
+                                                          //обходим массивссылок
+    for ( i <- 0 until size )                             //определяем валидность каждой ссылки
     {
       val element = elementsWithAttr.get(i)
       val url  = element.attr("abs:href")

@@ -21,18 +21,22 @@ object Starter {
 
     try {
 
-      val readerConfigurations = new ReaderConfigurations("configuration.json")
-      val sizeArray = readerConfigurations.CountSites
+      val readerConfigurations = new ReaderConfigurations("configuration.json")     //считываем правила по указанному имени
+      val countSites = readerConfigurations.CountSites                              // получаем количество сайтов
 
       val bufferArticle = new ArrayBuffer[HtmlItem]()
 
-      for (i <- 0 until sizeArray) {
-        val parser = new HtmlParser(readerConfigurations)
-        val array = parser.LoadHtmlItemFromPage()
-        logger.write("Количество статей: "+array.size.toString)
+      for (i <- 0 until countSites ) {
+        val countPages = readerConfigurations.getCountPages
+        for( j <- 0 until countPages){
+          val parser = new HtmlParser(readerConfigurations)                           // передаём в конструктор читателя конфига
+          val array = parser.LoadHtmlItemFromPage()                                   // считываем статьи с указанного сайта
+          logger.write("Количество статей: "+array.size.toString)                     // записываем количество статей в конфиг
 
-        bufferArticle ++= array
-        readerConfigurations.nextSite()
+          bufferArticle ++= array
+          readerConfigurations.nextPage
+        }
+        readerConfigurations.nextSite                                             // устанавливаем следующий сайт
       }
 
       val articleWriter = new ArticleWriter()

@@ -8,6 +8,8 @@ import scala.io.Source
  */
 case class KeyValue(key : String, value : String)
 
+
+
 class ReaderConfigurations(nameFile : String){
 
   private val homeDir    = System.getProperty("user.dir")               //текущая дирректория
@@ -17,7 +19,6 @@ class ReaderConfigurations(nameFile : String){
   private val arraySites = this.getSites                                //массив с просматриваемыми сайтами
   private var currentSite = arraySites(0)                               //Текущий сайт
   private var jsonCurrentRules = getRulesForCurrentSite()               //правила для текущего сайта
-
   private var currentIndexOfSite = 0                                    //Индекс текущего сайта в массиве
   private val countSites = arraySites.length                            //Общее количество сайтов
 

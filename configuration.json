@@ -21,7 +21,7 @@
 
 							  "htmlItems" : [ "top", "\/post\/", "blog"], //строки,одну из которых, должны содержать ссылки на статьи
 
-							  "invalidUrl" : [   ".jpg", ".css", ".jpg", ".png", "\/user", "\/register","\/auth", "\/login", "#", "posts\/top"]
+							  "invalidUrl" : [   ".jpg", ".css", ".jpg", ".png", "\/user", "\/register","\/auth", "\/login", "#", "posts\/top","utm_source"]
 							},//строки, которые не должны содержаться в ссылках
 
   "http:\/\/www.linux.org.ru" : {

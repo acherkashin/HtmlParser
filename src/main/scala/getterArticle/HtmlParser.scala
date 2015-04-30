@@ -123,7 +123,7 @@ class HtmlParser(readerConfigurations : ReaderConfigurations){
 
         if(valid){
           HtmlItems += HtmlItem.CreateHtmlItem(url, keyValueArticle, keyValueDateTime)
-          //Thread.sleep(timeOut)
+          Thread.sleep(timeOut)
         }
       }
       catch{

@@ -2,7 +2,8 @@
   "sites":["http:\/\/habrahabr.ru", "http:\/\/www.linux.org.ru" ],
 
   "http:\/\/habrahabr.ru" : {
-							 "pages":["http:\/\/habrahabr.ru\/hub\/scala",
+							 "pages":["http:\/\/habrahabr.ru",
+							   		  "http:\/\/habrahabr.ru\/hub\/scala",
 							          "http:\/\/habrahabr.ru\/hub\/cpp",
 							          "http:\/\/habrahabr.ru\/hub\/csharp",
 							 		  "http:\/\/habrahabr.ru\/hub\/html5",

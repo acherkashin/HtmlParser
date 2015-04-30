@@ -11,6 +11,7 @@ object DateTimeParser {
 
   def parseDateTime(strDateTime: String, url: String) : String ={
     val name = selectSite(url)
+
     name match {
       case NameSite.habrahubr => getDateTimeForHabraHabr(strDateTime)
       case NameSite.linuxOrg => getDateTimeForLinuxOrg(strDateTime)
@@ -26,13 +27,15 @@ object DateTimeParser {
 
   def getDateTimeForHabraHabr(strDateTime : String):String = {
     val year = getYear(strDateTime)
-    val day = getDay(strDateTime)
+    var day = getDayForHabraHabr(strDateTime)
     val month = getMonthForHabraHabr(strDateTime)
     val minutes = getMinutesForHabraHabr(strDateTime)
     val hours = getHours(strDateTime)
 
+    if(day == 0)
+      day = 1
+
     val dateTime = new DateTime(year, month, day, hours, minutes)
-    println( dateTime.toString +"  "+ strDateTime)
     dateTime.toString
   }
 
@@ -76,6 +79,7 @@ object DateTimeParser {
 
 
 //  Метод-обобщение на его основе строятся сетоды getHours, getMinutes, getYear
+//  Метод-обобщение на его основе строятся сетоды getHours, getMinutes, getYear
   def getHoursOrMinutesOrYear(regex : String, strDateTime : String, time : Time): Int ={
     val matcher = makeMatcher(regex, strDateTime)
     val pageHasInformation = matcher.find
@@ -92,8 +96,8 @@ object DateTimeParser {
     information
   }
 
-  //подходит как для linux.org так и для HabraHabr
-  def getDay( strDateTime : String ): Int = {
+
+  def getDayForHabraHabr( strDateTime : String ): Int = {
 
     val strYesterday = "вчера"
     val strToday = "сегодня"
@@ -103,7 +107,7 @@ object DateTimeParser {
     val day = if(hasToday)
                  DateTime.now.dayOfMonth.get
               else if(hasYesterday)
-                    DateTime.now.dayOfMonth.get - 1
+                      DateTime.now.dayOfMonth.get - 1
                    else
                       getDayFromNumber(strDateTime)
 
@@ -112,13 +116,12 @@ object DateTimeParser {
 
   def getDateTimeForLinuxOrg(strDateTime : String) : String ={
     val year = getYear(strDateTime)
-    val day = getDay(strDateTime)
+    val day = getDayFromNumber(strDateTime)
     val month = getMonthForLinuxOrg(strDateTime)
     val minutes = getMinutesForLinuxOrg(strDateTime)
     val hourse = getHours(strDateTime)
 
     val dateTime = new DateTime(year, month, day, hourse, minutes)
-    println( dateTime.toString +"  "+ strDateTime)
     dateTime.toString
   }
 
@@ -133,14 +136,14 @@ object DateTimeParser {
     getHoursOrMinutesOrYear(regexForMinutes, strDateTime, Time.month)
   }
 
-  def makeMatcher(regex : String , pattern : String): Matcher ={
+private  def makeMatcher(regex : String , pattern : String): Matcher ={
     val patternForTime = Pattern.compile(regex)
     val matcherForDateTime = patternForTime.matcher(pattern)
 
     matcherForDateTime
   }
 
-  def DeleteSeparators(str : String) : String = {
+private  def DeleteSeparators(str : String) : String = {
     var newStr = new StringBuffer(str)
     delColon(newStr)
     delDots(newStr)
@@ -148,7 +151,7 @@ object DateTimeParser {
     newStr.toString
   }
 
-  def delDots(strBuf : StringBuffer): StringBuffer = {
+private  def delDots(strBuf : StringBuffer): StringBuffer = {
 
     var hasDot = true
     while(hasDot){
@@ -163,7 +166,7 @@ object DateTimeParser {
     strBuf
   }
 
-  def delColon(strBuf : StringBuffer): StringBuffer ={
+private  def delColon(strBuf : StringBuffer): StringBuffer ={
     var hasColon = true
     while(hasColon){
       val index = strBuf.indexOf(":")
@@ -177,7 +180,7 @@ object DateTimeParser {
   }
 
   def getDayFromNumber(strDateTime: String) : Int = {
-    val regexForDay = makeMatcher("[0-9]*", strDateTime)
+    val regexForDay = makeMatcher("[0-9]+", strDateTime)
     val startWithNumber = regexForDay.find
 
     val day = if(startWithNumber)

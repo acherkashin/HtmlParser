@@ -8,20 +8,22 @@ import scala.io.Source
  */
 case class KeyValue(key : String, value : String)
 
-
+////Каждой странице соответствует case class , который состоит из
+////массива страниц, текущей страницы, её индекса в массиве и количества страниц в массиве
+//case class Pages(currentPage: String, currentIndex : Int, arrPages : Array[String] )
 
 class ReaderConfigurations(nameFile : String){
 
   private val homeDir    = System.getProperty("user.dir")               //текущая дирректория
   private val pathToFile =  Paths.get(homeDir, nameFile).toString       //путь к файлу с правилами
-  private val jsonFile = getFileAsJson()
-
+  private val jsonFile = getRulesFromFileAsJsonObject()                                //
+ //----------------------------------Поля сайтов------------------------------------------------------------------------
   private val arraySites = this.getSites                                //массив с просматриваемыми сайтами
   private var currentSite = arraySites(0)                               //Текущий сайт
   private var jsonCurrentRules = getRulesForCurrentSite()               //правила для текущего сайта
   private var currentIndexOfSite = 0                                    //Индекс текущего сайта в массиве
   private val countSites = arraySites.length                            //Общее количество сайтов
-
+ //-----------------------------Поля страниц----------------------------------------------------------------------------
   private var currentIndexOfPage = 0                                    //Индекс текущей страницы
   private var pagesOfCurrentSite : Array[String] = this.getPagesOfCurrentSites //Массив страниц
   private var currentPage: String = this.getDefaultPage                 //Текущая страница
@@ -85,7 +87,7 @@ class ReaderConfigurations(nameFile : String){
    }
   /*Метод берёт указанный при создании экземпляра файл
   и преобразует к объекту Json*/
-  def getFileAsJson(): JsonObject = {
+  def getRulesFromFileAsJsonObject(): JsonObject = {
     val source  = Source.fromFile(pathToFile)
     val strJson = source.mkString
 
@@ -114,7 +116,6 @@ class ReaderConfigurations(nameFile : String){
   //метод, который устанавливает следующий сайт
   def nextSite(): Boolean = {
     var result = true
-
     if(this.hasNextSite()){
       currentIndexOfSite += 1
       currentSite = arraySites(currentIndexOfSite)
@@ -124,7 +125,6 @@ class ReaderConfigurations(nameFile : String){
       pagesOfCurrentSite = this.getPagesOfCurrentSites          //загружаем перечень страниц для установленного сайта
       countPages = this.getCountPages                           //получаем количество страниц
       currentPage = this.getDefaultPage                         //устанавливаем страницу по умолчанию
-
     }else
       result = false
 
@@ -141,7 +141,7 @@ class ReaderConfigurations(nameFile : String){
     }
 
     arrayRequiredWords.toArray
-  }//получаем перечень сайтов
+  }
 
   //Возвращает URL текущего сайта
   def CurrentSite = { currentSite}

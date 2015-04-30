@@ -3,6 +3,7 @@ package getterArticle
 import java.io.FileWriter
 import java.util.regex.Pattern
 
+import org.joda.time.DateTime
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -52,6 +53,8 @@ class HtmlParser(readerConfigurations : ReaderConfigurations){
     timeOut
   }
 
+
+
   def isInvalidUrl(url : String) : Boolean = {
     var isInvalid = false
 
@@ -94,8 +97,7 @@ class HtmlParser(readerConfigurations : ReaderConfigurations){
     if(! isInvalidUrl(url) && isCheckUrl(url) && isHtmlItem(url))
       valid = true
 
-    return valid;
-
+     valid
   }
 
   def LoadHtmlItemFromPage() : Array[HtmlItem] ={

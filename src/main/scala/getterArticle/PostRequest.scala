@@ -10,14 +10,14 @@ case class OK(url: String) extends RequestResult
 
 object PostRequest {
   def send(url: String, json: String): RequestResult = {
-    val data   = json.getBytes("UTF8")                                  //получаем массив байтов
+    val data   = json.getBytes("UTF8")
     val urlObj = new URL(url)
-    val conn   = urlObj.openConnection.asInstanceOf[HttpURLConnection]  //получаем экземпляр класса "HttpURLConnection"
+    val conn   = urlObj.openConnection.asInstanceOf[HttpURLConnection]
 
     try {
-      init(conn)                                  //инициализация запроса
+      init(conn)
       writeRequest(conn, data)
-      val resp = getResponse(conn)                //получаем ответ
+      val resp = getResponse(conn)
       resp match {
         case "exists" => DocExists(url)
         case "ok"     => OK(url)
@@ -32,9 +32,9 @@ object PostRequest {
     conn.setDoInput(true)                                        //соединение может использоваться для ввода
     conn.setDoOutput(true)                                       //соединение может использоваться для вывода
     conn.setUseCaches(false)                                     //протоколу позволяется делать кэширование
-    conn.setInstanceFollowRedirects(false)                       //?????????????????
+    conn.setInstanceFollowRedirects(false)                       //Запрещает серверу перенаправлять запрос на другие сервера
     conn.addRequestProperty("Content-Type", "application/json")  //устанавливаем свойства запроса
-    conn.setRequestMethod("POST")                                //будет использоваться метод POST
+    conn.setRequestMethod("POST")
   }
 
   private def writeRequest(conn: HttpURLConnection, data: Array[Byte]): Unit = {
@@ -42,7 +42,7 @@ object PostRequest {
     common.using(conn.getOutputStream) {                               // т.е. передаём на сервер длину массива
       stream =>
         stream.write(data)
-        stream.flush                                            //очищаем буферы, завершаем операцию вывода
+        stream.flush                                                  //очищаем буферы, завершаем операцию вывода
     }
   }
 
@@ -55,7 +55,7 @@ object PostRequest {
             var line = br.readLine                                //считываем строку из потока
             while (line != null) {
               if (resp.length > 0)
-                resp.append('\r')                                 //для чего выравнивания текста?
+                resp.append('\r')
               resp.append(line)
               line = br.readLine
             }

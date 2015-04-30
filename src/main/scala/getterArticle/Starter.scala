@@ -6,15 +6,11 @@ import java.util
  * Created by Александр on 28.03.2015.
  */
 object Starter {
-  val postUrl = "http://localhost:3000/insert-document"
+  val postUrl = "http://188.226.178.169:3000/insert-document"
   val logger = new Logger("article")
 
   def main(args:Array[String]):Unit = {
-
-
-
     try {
-
       val readerConfigurations = new ReaderConfigurations("configuration.json")     //считываем правила по указанному имени
       val countSites = readerConfigurations.CountSites                              // получаем количество сайтов
 
@@ -26,11 +22,13 @@ object Starter {
         for( j <- 0 until countPages){
           val parser = new HtmlParser(readerConfigurations)                           // передаём в конструктор читателя конфига
           val array = parser.LoadHtmlItemFromPage()                                   // считываем статьи с указанного сайта
-          logger.write("Количество статей: "+array.size.toString)                     // записываем количество статей в конфиг
-          AddArrayToSet(array, bufferArticle)
-          readerConfigurations.nextPage
+          logger.write("Количество статей: "+array.size.toString)                     // записываем количество статей в лог Файл
+          //AddArrayToSet(array, bufferArticle)                                       // записываем массив статей в множество
+
+          array.foreach( postItem( _ ) )                                              // отправляем данные на сервер
+          readerConfigurations.nextPage                                               // переходим на следующую страницу
         }
-        readerConfigurations.nextSite                                             // устанавливаем следующий сайт
+        readerConfigurations.nextSite                                                 // переходим на следующий сайт
       }
 
       val articleWriter = new ArticleWriter()
@@ -56,11 +54,11 @@ object Starter {
 
       val res = PostRequest.send(postUrl, item.toJson)
       res match {
-        case x: DocExists => logger.write(item.url)
-        case x: OK        => logger.write(item.url)
+        case x: DocExists => logger.write("DocExists: "+item.url)
+        case x: OK        => logger.write("OK"+item.url)
       }
     }catch {
-      case ex: Exception => logger.write(ex.getMessage)
+      case ex: Exception => logger.write("Error: "+ex.getMessage)
     }
   }
 

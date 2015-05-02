@@ -23,7 +23,7 @@ case class HtmlItem(url: String,title : String, description : String, dateTime :
     sb.append("  \"url\": \"" + StringEscapeUtils.escapeJson(url) + "\",\n")
     sb.append("  \"title\": \"" + StringEscapeUtils.escapeJson(title) + "\",\n")
     sb.append("  \"time\": \"" + StringEscapeUtils.escapeJson(dateTime) + "\",\n")
-    sb.append("  \"snippet\": \"" + StringEscapeUtils.escapeJson(description) + "\n")
+    sb.append("  \"snippet\": \"" + StringEscapeUtils.escapeJson(description) + "\"\n")
     sb.append("}")
 
     sb.toString()
@@ -45,7 +45,7 @@ object HtmlItem{
       doc.getElementsByAttributeValue(keyValueDateTime.key, keyValueDateTime.value).text    // получаем дату и время
     val time = DateTimeParser.parseDateTime(dateTime, url)
 
-    new HtmlItem(url, title, description, dateTime)
+    new HtmlItem(url, title, description, time)
   }
 
 }

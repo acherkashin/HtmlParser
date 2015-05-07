@@ -8,7 +8,7 @@ import scala.io.Source
  */
 case class KeyValue(key : String, value : String)
 
-//case class WebSite(defaultPage)
+//case class WebSite(startPage : String,pagesOfCurrentSite : Array[String], currentPage: Int, )
 
 class ReaderConfigurations(nameFile : String){
 

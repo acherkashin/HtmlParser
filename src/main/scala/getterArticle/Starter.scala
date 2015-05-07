@@ -42,20 +42,28 @@ object Starter {
   }
 
   private def getAllHtmlItems(): util.HashSet[HtmlItem] ={
-    val readerConfigurations = new ReaderConfigurations(nameConfigFile)     //считываем правила по указанному имени
+    val readerConfigurations = new ReaderConfigurations(nameConfigFile)           //считываем правила по указанному имени файла
     val countSites = readerConfigurations.CountSites                              // получаем количество сайтов
     val setArticle = new util.HashSet[HtmlItem]()
 
     for (i <- 0 until countSites ) {
-      val countPages = readerConfigurations.getCountPages
+      try {
+        val countPages = readerConfigurations.getCountPages
 
-      for( j <- 0 until countPages){
-        val parser = new HtmlParser(readerConfigurations)                           // передаём в конструктор читателя конфига
-        val array = parser.LoadHtmlItemFromPage()                                   // считываем статьи с указанного сайта
-        logger.write("Количество статей: "+array.size.toString)                     // записываем количество статей в лог Файл
-        AddArrayToSet(array, setArticle)                                            // записываем массив статей в множество
+        for (j <- 0 until countPages) {
+          try {
+            val parser = new HtmlParser(readerConfigurations)                     // передаём в конструктор читателя конфига
+            val array = parser.LoadHtmlItemFromPage()                             // считываем статьи с указанного сайта
+            logger.write("Количество статей: " + array.size.toString)             // записываем количество статей в лог Файл
+            AddArrayToSet(array, setArticle)                                      // записываем массив статей в множество
 
-        readerConfigurations.nextPage                                               // переходим на следующую страницу
+            readerConfigurations.nextPage                                         // переходим на следующую страницу
+          } catch {
+            case ex: Exception => logger.write(ex.getMessage)
+          }
+        }
+      }catch{
+        case ex: Exception => logger.write(ex.getMessage)
       }
       readerConfigurations.nextSite
     }
@@ -68,12 +76,13 @@ object Starter {
     while(true){
       try{
         if (shouldLoad(lastLoad)){
-          val arrayArticle = HashSetToArray(this.getAllHtmlItems)
+          val setArticle = this.getAllHtmlItems
+          val arrayArticle = HashSetToArray(setArticle)
 
           arrayArticle.foreach( postItem( _ ) )                                              // отправляем данные на сервер
           lastLoad = Some(DateTime.now)
         }
-        Thread.sleep(10000)
+       // Thread.sleep(10000)
       }
       catch {
         case x :Exception  => logger.write("Ошибка: " + x.getMessage)

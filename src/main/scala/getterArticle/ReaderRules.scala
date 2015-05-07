@@ -8,9 +8,7 @@ import scala.io.Source
  */
 case class KeyValue(key : String, value : String)
 
-////Каждой странице соответствует case class , который состоит из
-////массива страниц, текущей страницы, её индекса в массиве и количества страниц в массиве
-//case class Pages(currentPage: String, currentIndex : Int, arrPages : Array[String] )
+//case class WebSite(defaultPage)
 
 class ReaderConfigurations(nameFile : String){
 

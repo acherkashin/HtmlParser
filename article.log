@@ -1,18 +1,1254 @@
-2015.05.02 12:16:30
+2015.05.08 00:26:28
 Обработка страницы http://habrahabr.ru
 
-2015.05.02 12:16:30
+2015.05.08 00:26:29
 TimeOut: 10000
 
-2015.05.02 12:16:36
-Ошибка обработки страницы:http://habrahabr.ru/post/257137/ Read timed out
+2015.05.08 00:26:42
+Количество статей: 37
 
-2015.05.02 12:16:39
-Ошибка обработки страницы:http://habrahabr.ru/post/255509/ connect timed out
+2015.05.08 00:26:42
+Обработка страницы http://habrahabr.ru/hub/scala
 
-2015.05.02 12:17:21
-Ошибка обработки страницы:http://habrahabr.ru/post/257133/ Read timed out
+2015.05.08 00:26:42
+TimeOut: 5000
 
-2015.05.02 12:17:24
-Ошибка обработки страницы:http://habrahabr.ru/post/230921/ connect timed out
+2015.05.08 00:27:00
+Количество статей: 41
+
+2015.05.08 00:27:00
+Обработка страницы http://habrahabr.ru/hub/cpp
+
+2015.05.08 00:27:00
+TimeOut: 5000
+
+2015.05.08 00:27:17
+Количество статей: 37
+
+2015.05.08 00:27:17
+Обработка страницы http://habrahabr.ru/hub/csharp
+
+2015.05.08 00:27:17
+TimeOut: 5000
+
+2015.05.08 00:27:20
+connect timed out
+
+2015.05.08 00:27:21
+Обработка страницы http://habrahabr.ru/hub/csharp
+
+2015.05.08 00:27:21
+TimeOut: 5000
+
+2015.05.08 00:27:41
+Количество статей: 34
+
+2015.05.08 00:27:42
+Обработка страницы http://habrahabr.ru/hub/html5
+
+2015.05.08 00:27:42
+TimeOut: 5000
+
+2015.05.08 00:28:10
+Количество статей: 44
+
+2015.05.08 00:28:10
+Обработка страницы http://habrahabr.ru/hub/css
+
+2015.05.08 00:28:10
+TimeOut: 5000
+
+2015.05.08 00:28:18
+Ошибка обработки страницы:http://habrahabr.ru/company/paysto/blog/257101/ connect timed out
+
+2015.05.08 00:28:47
+Количество статей: 34
+
+2015.05.08 00:28:48
+Обработка страницы http://habrahabr.ru/hub/java
+
+2015.05.08 00:28:48
+TimeOut: 5000
+
+2015.05.08 00:28:51
+Ошибка обработки страницы:http://habrahabr.ru/company/mailru/blog/257307/ Read timed out
+
+2015.05.08 00:29:19
+Ошибка обработки страницы:http://habrahabr.ru/company/flyelephant/blog/257463/ Read timed out
+
+2015.05.08 00:29:22
+Количество статей: 36
+
+2015.05.08 00:29:23
+Обработка страницы http://habrahabr.ru/hub/lisp
+
+2015.05.08 00:29:23
+TimeOut: 5000
+
+2015.05.08 00:29:41
+Количество статей: 37
+
+2015.05.08 00:29:41
+Обработка страницы http://habrahabr.ru/hub/Git
+
+2015.05.08 00:29:41
+TimeOut: 5000
+
+2015.05.08 00:30:05
+Количество статей: 37
+
+2015.05.08 00:30:05
+Обработка страницы http://www.linux.org.ru
+
+2015.05.08 00:30:05
+TimeOut: 5000
+
+2015.05.08 00:30:11
+Количество статей: 21
+
+2015.05.08 00:30:11
+Обработка страницы http://www.linux.org.ru/news/opensource
+
+2015.05.08 00:30:11
+TimeOut: 5000
+
+2015.05.08 00:30:14
+connect timed out
+
+2015.05.08 00:30:14
+Обработка страницы http://www.linux.org.ru/news/opensource
+
+2015.05.08 00:30:14
+TimeOut: 5000
+
+2015.05.08 00:30:18
+Количество статей: 21
+
+2015.05.08 00:30:18
+Обработка страницы http://www.linux.org.ru/news/java
+
+2015.05.08 00:30:18
+TimeOut: 5000
+
+2015.05.08 00:30:28
+Количество статей: 27
+
+2015.05.08 00:30:28
+Обработка страницы http://www.linux.org.ru/news/internet
+
+2015.05.08 00:30:28
+TimeOut: 5000
+
+2015.05.08 00:30:37
+Количество статей: 20
+
+2015.05.08 00:30:37
+Обработка страницы http://www.linux.org.ru/news/commercial
+
+2015.05.08 00:30:37
+TimeOut: 5000
+
+2015.05.08 00:30:48
+Количество статей: 20
+
+2015.05.08 00:30:49
+Обработка страницы http://www.linux.org.ru/news/conference
+
+2015.05.08 00:30:49
+TimeOut: 5000
+
+2015.05.08 00:31:01
+Количество статей: 20
+
+2015.05.08 00:31:01
+Обработка страницы http://www.linux.org.ru/news/hardware
+
+2015.05.08 00:31:01
+TimeOut: 5000
+
+2015.05.08 00:31:09
+Ошибка обработки страницы:http://www.linux.org.ru/news/hardware/11436438 Read timed out
+
+2015.05.08 00:31:15
+Количество статей: 19
+
+2015.05.08 00:31:24
+Обработка страницы http://www.linux.org.ru/news/android
+
+2015.05.08 00:31:24
+TimeOut: 5000
+
+2015.05.08 00:31:35
+Количество статей: 21
+
+2015.05.08 00:31:35
+Обработка страницы http://www.linux.org.ru/news/kernel
+
+2015.05.08 00:31:35
+TimeOut: 5000
+
+2015.05.08 00:31:43
+Количество статей: 20
+
+2015.05.08 00:31:43
+Обработка страницы http://www.linux.org.ru/news/multimedia
+
+2015.05.08 00:31:43
+TimeOut: 5000
+
+2015.05.08 00:31:49
+Количество статей: 20
+
+2015.05.08 00:31:49
+Обработка страницы http://www.linux.org.ru/news/debian
+
+2015.05.08 00:31:49
+TimeOut: 5000
+
+2015.05.08 00:31:56
+Количество статей: 20
+
+2015.05.08 00:31:56
+DocExists: http://www.linux.org.ru/news/internet/11522627
+
+2015.05.08 00:31:57
+DocExists: http://habrahabr.ru/company/mailru/blog/248845/
+
+2015.05.08 00:31:57
+DocExists: http://www.linux.org.ru/news/internet/11078296
+
+2015.05.08 00:31:57
+DocExists: http://www.linux.org.ru/news/commercial/11493026
+
+2015.05.08 00:31:58
+OK: http://habrahabr.ru/company/microsoft/blog/257453/
+
+2015.05.08 00:31:59
+DocExists: http://habrahabr.ru/post/257097/
+
+2015.05.08 00:32:01
+DocExists: http://habrahabr.ru/company/xakep/blog/244477/
+
+2015.05.08 00:32:01
+DocExists: http://www.linux.org.ru/news/java/10779764
+
+2015.05.08 00:32:02
+DocExists: http://www.linux.org.ru/news/java/11006304
+
+2015.05.08 00:32:02
+DocExists: http://www.linux.org.ru/news/android/10904703
+
+2015.05.08 00:32:02
+DocExists: http://www.linux.org.ru/news/kernel/11348446
+
+2015.05.08 00:32:03
+DocExists: http://habrahabr.ru/post/255443/
+
+2015.05.08 00:32:03
+DocExists: http://www.linux.org.ru/news/opensource/11572681
+
+2015.05.08 00:32:04
+OK: http://habrahabr.ru/company/intersystems/blog/253825/
+
+2015.05.08 00:32:04
+DocExists: http://habrahabr.ru/post/256789/
+
+2015.05.08 00:32:04
+DocExists: http://www.linux.org.ru/news/multimedia/11447999
+
+2015.05.08 00:32:04
+DocExists: http://www.linux.org.ru/news/conference/11539328
+
+2015.05.08 00:32:05
+DocExists: http://www.linux.org.ru/news/java/10296409
+
+2015.05.08 00:32:05
+DocExists: http://habrahabr.ru/post/257383/
+
+2015.05.08 00:32:05
+DocExists: http://www.linux.org.ru/news/android/10984101
+
+2015.05.08 00:32:06
+DocExists: http://habrahabr.ru/company/htmlacademy/blog/252169/
+
+2015.05.08 00:32:07
+DocExists: http://www.linux.org.ru/news/kernel/10734023
+
+2015.05.08 00:32:08
+DocExists: http://habrahabr.ru/post/257223/
+
+2015.05.08 00:32:08
+OK: http://habrahabr.ru/company/npl/blog/257499/
+
+2015.05.08 00:32:09
+DocExists: http://www.linux.org.ru/news/hardware/11110181
+
+2015.05.08 00:32:09
+DocExists: http://www.linux.org.ru/news/internet/11466063
+
+2015.05.08 00:32:09
+OK: http://habrahabr.ru/post/250585/
+
+2015.05.08 00:32:09
+DocExists: http://habrahabr.ru/company/wargaming/blog/253801/
+
+2015.05.08 00:32:10
+DocExists: http://habrahabr.ru/post/257253/
+
+2015.05.08 00:32:11
+DocExists: http://www.linux.org.ru/news/hardware/11549979
+
+2015.05.08 00:32:11
+DocExists: http://habrahabr.ru/company/golovachcourses/blog/217051/
+
+2015.05.08 00:32:11
+DocExists: http://www.linux.org.ru/news/hardware/11515790
+
+2015.05.08 00:32:11
+DocExists: http://www.linux.org.ru/news/kernel/11138033
+
+2015.05.08 00:32:12
+DocExists: http://www.linux.org.ru/news/debian/10891731
+
+2015.05.08 00:32:12
+DocExists: http://www.linux.org.ru/news/kernel/10638586
+
+2015.05.08 00:32:12
+DocExists: http://habrahabr.ru/company/infopulse/blog/256829/
+
+2015.05.08 00:32:12
+DocExists: http://www.linux.org.ru/news/debian/11563949
+
+2015.05.08 00:32:13
+DocExists: http://www.linux.org.ru/news/debian/10950381
+
+2015.05.08 00:32:13
+DocExists: http://www.linux.org.ru/news/conference/11112487
+
+2015.05.08 00:32:13
+DocExists: http://www.linux.org.ru/news/hardware/11259775
+
+2015.05.08 00:32:13
+DocExists: http://habrahabr.ru/company/naumen/blog/256899/
+
+2015.05.08 00:32:13
+DocExists: http://www.linux.org.ru/news/android/11094715
+
+2015.05.08 00:32:14
+DocExists: http://habrahabr.ru/post/246715/
+
+2015.05.08 00:32:15
+DocExists: http://habrahabr.ru/post/257401/
+
+2015.05.08 00:32:15
+DocExists: http://www.linux.org.ru/news/commercial/11563096
+
+2015.05.08 00:32:16
+DocExists: http://habrahabr.ru/company/pvs-studio/blog/256637/
+
+2015.05.08 00:32:16
+DocExists: http://habrahabr.ru/post/253413/
+
+2015.05.08 00:32:17
+OK: http://habrahabr.ru/company/flyelephant/blog/257463/
+
+2015.05.08 00:32:17
+DocExists: http://www.linux.org.ru/news/kernel/11504905
+
+2015.05.08 00:32:17
+DocExists: http://www.linux.org.ru/news/debian/10934723
+
+2015.05.08 00:32:17
+DocExists: http://www.linux.org.ru/news/hardware/11271400
+
+2015.05.08 00:32:17
+DocExists: http://habrahabr.ru/post/256817/
+
+2015.05.08 00:32:18
+DocExists: http://habrahabr.ru/post/253297/
+
+2015.05.08 00:32:19
+DocExists: http://habrahabr.ru/company/golovachcourses/blog/215275/
+
+2015.05.08 00:32:19
+DocExists: http://www.linux.org.ru/news/java/10460624
+
+2015.05.08 00:32:19
+DocExists: http://www.linux.org.ru/news/android/10948278
+
+2015.05.08 00:32:19
+DocExists: http://www.linux.org.ru/news/java/10692019
+
+2015.05.08 00:32:19
+DocExists: http://www.linux.org.ru/news/kernel/10563043
+
+2015.05.08 00:32:20
+OK: http://habrahabr.ru/company/dataart/blog/257505/
+
+2015.05.08 00:32:21
+DocExists: http://habrahabr.ru/post/247889/
+
+2015.05.08 00:32:21
+OK: http://habrahabr.ru/company/rambler-co/blog/257461/
+
+2015.05.08 00:32:21
+DocExists: http://habrahabr.ru/company/htmlacademy/blog/256417/
+
+2015.05.08 00:32:23
+DocExists: http://habrahabr.ru/company/pvs-studio/blog/247271/
+
+2015.05.08 00:32:23
+DocExists: http://www.linux.org.ru/news/internet/11050410
+
+2015.05.08 00:32:23
+DocExists: http://habrahabr.ru/company/zfort/blog/257199/
+
+2015.05.08 00:32:24
+DocExists: http://www.linux.org.ru/news/debian/11324078
+
+2015.05.08 00:32:24
+DocExists: http://habrahabr.ru/post/237297/
+
+2015.05.08 00:32:24
+DocExists: http://www.linux.org.ru/news/opensource/11541568
+
+2015.05.08 00:32:24
+DocExists: http://www.linux.org.ru/news/multimedia/11520687
+
+2015.05.08 00:32:25
+DocExists: http://www.linux.org.ru/news/internet/11156873
+
+2015.05.08 00:32:25
+DocExists: http://www.linux.org.ru/news/commercial/11537899
+
+2015.05.08 00:32:25
+DocExists: http://habrahabr.ru/company/luxoft/blog/257203/
+
+2015.05.08 00:32:25
+DocExists: http://www.linux.org.ru/news/opensource/11575384
+
+2015.05.08 00:32:26
+DocExists: http://habrahabr.ru/company/htmlacademy/blog/252843/
+
+2015.05.08 00:32:26
+DocExists: http://www.linux.org.ru/news/hardware/11400256
+
+2015.05.08 00:32:26
+DocExists: http://www.linux.org.ru/news/multimedia/11452108
+
+2015.05.08 00:32:26
+DocExists: http://www.linux.org.ru/news/java/10628571
+
+2015.05.08 00:32:27
+DocExists: http://habrahabr.ru/post/254015/
+
+2015.05.08 00:32:28
+DocExists: http://www.linux.org.ru/news/internet/11390666
+
+2015.05.08 00:32:29
+OK: http://habrahabr.ru/post/247589/
+
+2015.05.08 00:32:30
+DocExists: http://www.linux.org.ru/news/opensource/11500740
+
+2015.05.08 00:32:30
+DocExists: http://www.linux.org.ru/news/java/10982044
+
+2015.05.08 00:32:31
+OK: http://habrahabr.ru/post/257477/
+
+2015.05.08 00:32:31
+DocExists: http://www.linux.org.ru/news/java/10625296
+
+2015.05.08 00:32:32
+OK: http://habrahabr.ru/post/257405/
+
+2015.05.08 00:32:33
+DocExists: http://www.linux.org.ru/news/commercial/11419768
+
+2015.05.08 00:32:33
+DocExists: http://habrahabr.ru/company/paysto/blog/257337/
+
+2015.05.08 00:32:33
+OK: http://habrahabr.ru/company/intel/blog/257273/
+
+2015.05.08 00:32:34
+DocExists: http://habrahabr.ru/post/248961/
+
+2015.05.08 00:32:34
+DocExists: http://www.linux.org.ru/tag/javafx
+
+2015.05.08 00:32:34
+OK: http://habrahabr.ru/company/aktiv-company/blog/191866/
+
+2015.05.08 00:32:35
+DocExists: http://www.linux.org.ru/news/android/11418006
+
+2015.05.08 00:32:36
+DocExists: http://habrahabr.ru/company/pvs-studio/blog/257079/
+
+2015.05.08 00:32:36
+DocExists: http://habrahabr.ru/post/257011/
+
+2015.05.08 00:32:36
+DocExists: http://www.linux.org.ru/news/conference/11467425
+
+2015.05.08 00:32:36
+DocExists: http://www.linux.org.ru/tag/java%207
+
+2015.05.08 00:32:37
+DocExists: http://www.linux.org.ru/news/android/10878586
+
+2015.05.08 00:32:37
+DocExists: http://habrahabr.ru/post/248121/
+
+2015.05.08 00:32:37
+DocExists: http://www.linux.org.ru/news/opensource/11546444
+
+2015.05.08 00:32:37
+DocExists: http://www.linux.org.ru/news/kernel/11336011
+
+2015.05.08 00:32:37
+DocExists: http://habrahabr.ru/post/255413/
+
+2015.05.08 00:32:37
+DocExists: http://www.linux.org.ru/news/opensource/11509027
+
+2015.05.08 00:32:37
+DocExists: http://www.linux.org.ru/news/java/10930043
+
+2015.05.08 00:32:37
+DocExists: http://www.linux.org.ru/news/conference/11333660
+
+2015.05.08 00:32:38
+DocExists: http://www.linux.org.ru/news/android/11032485
+
+2015.05.08 00:32:38
+DocExists: http://habrahabr.ru/post/254689/
+
+2015.05.08 00:32:38
+DocExists: http://www.linux.org.ru/news/conference/11511820
+
+2015.05.08 00:32:38
+DocExists: http://www.linux.org.ru/news/android/10865022
+
+2015.05.08 00:32:39
+DocExists: http://habrahabr.ru/post/251303/
+
+2015.05.08 00:32:40
+DocExists: http://www.linux.org.ru/news/internet/11274762
+
+2015.05.08 00:32:40
+DocExists: http://www.linux.org.ru/news/conference/11046915
+
+2015.05.08 00:32:41
+DocExists: http://www.linux.org.ru/news/commercial/11056509
+
+2015.05.08 00:32:41
+DocExists: http://habrahabr.ru/company/golovachcourses/blog/256883/
+
+2015.05.08 00:32:42
+DocExists: http://www.linux.org.ru/news/commercial/11378974
+
+2015.05.08 00:32:43
+DocExists: http://habrahabr.ru/company/pt/blog/253211/
+
+2015.05.08 00:32:43
+DocExists: http://www.linux.org.ru/news/multimedia/11372054
+
+2015.05.08 00:32:43
+DocExists: http://www.linux.org.ru/news/java/11576488
+
+2015.05.08 00:32:44
+DocExists: http://www.linux.org.ru/news/multimedia/11356996
+
+2015.05.08 00:32:44
+DocExists: http://www.linux.org.ru/news/commercial/11559688
+
+2015.05.08 00:32:44
+DocExists: http://habrahabr.ru/company/golovachcourses/blog/251239/
+
+2015.05.08 00:32:45
+OK: http://habrahabr.ru/company/intersystems/blog/257501/
+
+2015.05.08 00:32:45
+DocExists: http://www.linux.org.ru/tag/java%208
+
+2015.05.08 00:32:46
+DocExists: http://habrahabr.ru/post/162367/
+
+2015.05.08 00:32:47
+DocExists: http://habrahabr.ru/company/golovachcourses/blog/231755/
+
+2015.05.08 00:32:47
+DocExists: http://www.linux.org.ru/news/conference/11529376
+
+2015.05.08 00:32:47
+DocExists: http://www.linux.org.ru/news/debian/11211610
+
+2015.05.08 00:32:47
+DocExists: http://www.linux.org.ru/news/hardware/11552855
+
+2015.05.08 00:32:48
+DocExists: http://www.linux.org.ru/news/opensource/11530751
+
+2015.05.08 00:32:49
+DocExists: http://habrahabr.ru/post/145607/
+
+2015.05.08 00:32:50
+DocExists: http://habrahabr.ru/post/248269/
+
+2015.05.08 00:32:50
+DocExists: http://www.linux.org.ru/news/android/11464878
+
+2015.05.08 00:32:50
+DocExists: http://www.linux.org.ru/news/conference/11383694
+
+2015.05.08 00:32:51
+DocExists: http://habrahabr.ru/company/arcadia/blog/245531/
+
+2015.05.08 00:32:51
+DocExists: http://www.linux.org.ru/news/commercial/11511073
+
+2015.05.08 00:32:51
+OK: http://habrahabr.ru/company/otr_to/blog/257507/
+
+2015.05.08 00:32:52
+DocExists: http://habrahabr.ru/company/golovachcourses/blog/255631/
+
+2015.05.08 00:32:53
+DocExists: http://habrahabr.ru/post/230619/
+
+2015.05.08 00:32:53
+DocExists: http://www.linux.org.ru/tag/javascript
+
+2015.05.08 00:32:53
+DocExists: http://habrahabr.ru/company/infopulse/blog/140456/
+
+2015.05.08 00:32:53
+DocExists: http://www.linux.org.ru/news/hardware/11288856
+
+2015.05.08 00:32:53
+DocExists: http://www.linux.org.ru/news/kernel/10377204
+
+2015.05.08 00:32:54
+OK: http://habrahabr.ru/post/257331/
+
+2015.05.08 00:32:55
+DocExists: http://habrahabr.ru/post/242649/
+
+2015.05.08 00:32:55
+DocExists: http://www.linux.org.ru/news/opensource/11541515
+
+2015.05.08 00:32:55
+DocExists: http://www.linux.org.ru/news/opensource/11530110
+
+2015.05.08 00:32:55
+DocExists: http://habrahabr.ru/post/250591/
+
+2015.05.08 00:32:56
+DocExists: http://habrahabr.ru/post/257247/
+
+2015.05.08 00:32:56
+DocExists: http://www.linux.org.ru/news/debian/10932074
+
+2015.05.08 00:32:56
+DocExists: http://www.linux.org.ru/news/commercial/11441053
+
+2015.05.08 00:32:57
+DocExists: http://www.linux.org.ru/news/conference/11254011
+
+2015.05.08 00:32:57
+DocExists: http://www.linux.org.ru/news/opensource/11518797
+
+2015.05.08 00:32:58
+DocExists: http://www.linux.org.ru/news/hardware/11228931
+
+2015.05.08 00:32:59
+OK: http://habrahabr.ru/post/257355/
+
+2015.05.08 00:32:59
+OK: http://www.linux.org.ru/news/debian/11549708/page9?lastmod=1431010430763
+
+2015.05.08 00:33:00
+DocExists: http://www.linux.org.ru/news/internet/11333226
+
+2015.05.08 00:33:00
+DocExists: http://www.linux.org.ru/news/opensource/11575627
+
+2015.05.08 00:33:00
+DocExists: http://www.linux.org.ru/news/android/10820683
+
+2015.05.08 00:33:00
+DocExists: http://habrahabr.ru/post/256907/
+
+2015.05.08 00:33:00
+DocExists: http://www.linux.org.ru/news/commercial/10925714
+
+2015.05.08 00:33:00
+DocExists: http://www.linux.org.ru/news/internet/11354726
+
+2015.05.08 00:33:01
+OK: http://habrahabr.ru/post/257449/
+
+2015.05.08 00:33:02
+DocExists: http://habrahabr.ru/company/pechkin/blog/257397/
+
+2015.05.08 00:33:03
+DocExists: http://habrahabr.ru/post/248663/
+
+2015.05.08 00:33:03
+DocExists: http://habrahabr.ru/post/257279/
+
+2015.05.08 00:33:04
+DocExists: http://www.linux.org.ru/news/java/11155806
+
+2015.05.08 00:33:04
+DocExists: http://www.linux.org.ru/news/kernel/11303283
+
+2015.05.08 00:33:04
+OK: http://www.linux.org.ru/news/hardware/11549979/page14?lastmod=1431021928413
+
+2015.05.08 00:33:04
+DocExists: http://www.linux.org.ru/news/kernel/11464307
+
+2015.05.08 00:33:04
+DocExists: http://habrahabr.ru/post/248941/
+
+2015.05.08 00:33:06
+DocExists: http://habrahabr.ru/post/256705/
+
+2015.05.08 00:33:06
+DocExists: http://habrahabr.ru/post/243683/
+
+2015.05.08 00:33:06
+DocExists: http://www.linux.org.ru/news/conference/11425137
+
+2015.05.08 00:33:06
+DocExists: http://www.linux.org.ru/news/debian/10960186
+
+2015.05.08 00:33:07
+DocExists: http://habrahabr.ru/post/252473/
+
+2015.05.08 00:33:08
+DocExists: http://habrahabr.ru/post/257221/
+
+2015.05.08 00:33:08
+DocExists: http://habrahabr.ru/company/infopulse/blog/213309/
+
+2015.05.08 00:33:09
+DocExists: http://habrahabr.ru/post/256017/
+
+2015.05.08 00:33:09
+DocExists: http://habrahabr.ru/post/248957/
+
+2015.05.08 00:33:10
+DocExists: http://www.linux.org.ru/news/java/11459699
+
+2015.05.08 00:33:12
+DocExists: http://habrahabr.ru/company/yandex/blog/249771/
+
+2015.05.08 00:33:12
+DocExists: http://www.linux.org.ru/news/hardware/11493326
+
+2015.05.08 00:33:12
+DocExists: http://www.linux.org.ru/news/kernel/10417829
+
+2015.05.08 00:33:12
+DocExists: http://www.linux.org.ru/news/debian/11154208
+
+2015.05.08 00:33:13
+OK: http://habrahabr.ru/post/257497/
+
+2015.05.08 00:33:13
+DocExists: http://habrahabr.ru/post/251087/
+
+2015.05.08 00:33:13
+DocExists: http://www.linux.org.ru/news/debian/11008256
+
+2015.05.08 00:33:13
+DocExists: http://www.linux.org.ru/news/opensource/11547430
+
+2015.05.08 00:33:17
+DocExists: http://habrahabr.ru/post/178235/
+
+2015.05.08 00:33:17
+DocExists: http://www.linux.org.ru/news/conference/11497631
+
+2015.05.08 00:33:18
+DocExists: http://habrahabr.ru/post/167119/
+
+2015.05.08 00:33:18
+DocExists: http://www.linux.org.ru/news/multimedia/11459443
+
+2015.05.08 00:33:18
+DocExists: http://www.linux.org.ru/news/internet/11561242
+
+2015.05.08 00:33:18
+DocExists: http://www.linux.org.ru/news/internet/11418219
+
+2015.05.08 00:33:18
+DocExists: http://www.linux.org.ru/news/commercial/11447579
+
+2015.05.08 00:33:18
+DocExists: http://www.linux.org.ru/news/debian/11051809
+
+2015.05.08 00:33:19
+DocExists: http://habrahabr.ru/company/zfort/blog/256669/
+
+2015.05.08 00:33:19
+DocExists: http://www.linux.org.ru/news/java/11564075
+
+2015.05.08 00:33:19
+DocExists: http://www.linux.org.ru/news/internet/11376614
+
+2015.05.08 00:33:19
+DocExists: http://www.linux.org.ru/news/multimedia/11373056
+
+2015.05.08 00:33:19
+DocExists: http://habrahabr.ru/post/257019/
+
+2015.05.08 00:33:19
+DocExists: http://habrahabr.ru/post/250025/
+
+2015.05.08 00:33:19
+DocExists: http://www.linux.org.ru/news/commercial/11109309
+
+2015.05.08 00:33:19
+DocExists: http://www.linux.org.ru/news/java/10300851
+
+2015.05.08 00:33:20
+OK: http://habrahabr.ru/company/krita/blog/246785/
+
+2015.05.08 00:33:20
+DocExists: http://habrahabr.ru/company/mailru/blog/247983/
+
+2015.05.08 00:33:20
+DocExists: http://www.linux.org.ru/news/opensource/11521889
+
+2015.05.08 00:33:20
+DocExists: http://habrahabr.ru/company/jugru/blog/257243/
+
+2015.05.08 00:33:21
+DocExists: http://www.linux.org.ru/news/games/11557052
+
+2015.05.08 00:33:21
+DocExists: http://habrahabr.ru/company/golovachcourses/blog/256651/
+
+2015.05.08 00:33:21
+DocExists: http://www.linux.org.ru/news/hardware/11515706
+
+2015.05.08 00:33:21
+DocExists: http://www.linux.org.ru/news/opensource/11541568/page5?lastmod=1430563609017
+
+2015.05.08 00:33:21
+DocExists: http://www.linux.org.ru/news/internet/11165438
+
+2015.05.08 00:33:22
+DocExists: http://www.linux.org.ru/news/conference/11522747
+
+2015.05.08 00:33:22
+DocExists: http://www.linux.org.ru/news/commercial/11037853
+
+2015.05.08 00:33:22
+DocExists: http://www.linux.org.ru/news/android/11114350
+
+2015.05.08 00:33:25
+DocExists: http://www.linux.org.ru/news/commercial/11465399
+
+2015.05.08 00:33:25
+DocExists: http://www.linux.org.ru/news/commercial/11080715
+
+2015.05.08 00:33:25
+DocExists: http://habrahabr.ru/hub/desktop_environment/
+
+2015.05.08 00:33:25
+DocExists: http://www.linux.org.ru/news/android/11180619
+
+2015.05.08 00:33:25
+DocExists: http://www.linux.org.ru/news/opensource/11530763
+
+2015.05.08 00:33:26
+DocExists: http://habrahabr.ru/post/251941/
+
+2015.05.08 00:33:26
+DocExists: http://www.linux.org.ru/news/debian/11045195
+
+2015.05.08 00:33:27
+DocExists: http://habrahabr.ru/post/257007/
+
+2015.05.08 00:33:27
+DocExists: http://www.linux.org.ru/news/opensource/11546996
+
+2015.05.08 00:33:27
+DocExists: http://www.linux.org.ru/news/opensource/7396781
+
+2015.05.08 00:33:27
+DocExists: http://habrahabr.ru/post/256929/
+
+2015.05.08 00:33:27
+DocExists: http://habrahabr.ru/post/256777/
+
+2015.05.08 00:33:27
+DocExists: http://www.linux.org.ru/news/android/11418346
+
+2015.05.08 00:33:28
+DocExists: http://www.linux.org.ru/news/multimedia/11464221
+
+2015.05.08 00:33:28
+DocExists: http://www.linux.org.ru/news/multimedia/11454525
+
+2015.05.08 00:33:28
+DocExists: http://habrahabr.ru/post/250787/
+
+2015.05.08 00:33:28
+DocExists: http://www.linux.org.ru/news/kernel/10748204
+
+2015.05.08 00:33:28
+DocExists: http://www.linux.org.ru/news/android/10841627
+
+2015.05.08 00:33:29
+DocExists: http://habrahabr.ru/post/253855/
+
+2015.05.08 00:33:29
+DocExists: http://habrahabr.ru/post/256815/
+
+2015.05.08 00:33:30
+OK: http://habrahabr.ru/company/neuronspace/blog/254671/
+
+2015.05.08 00:33:30
+DocExists: http://www.linux.org.ru/news/hardware/11490513
+
+2015.05.08 00:33:30
+DocExists: http://www.linux.org.ru/news/multimedia/11525748
+
+2015.05.08 00:33:30
+DocExists: http://www.linux.org.ru/news/commercial/11053000
+
+2015.05.08 00:33:30
+DocExists: http://www.linux.org.ru/news/debian/11549708
+
+2015.05.08 00:33:31
+DocExists: http://www.linux.org.ru/news/multimedia/11420725
+
+2015.05.08 00:33:31
+DocExists: http://www.linux.org.ru/news/debian/11464161
+
+2015.05.08 00:33:31
+DocExists: http://www.linux.org.ru/news/internet/11265891
+
+2015.05.08 00:33:31
+DocExists: http://www.linux.org.ru/news/multimedia/11560481
+
+2015.05.08 00:33:31
+DocExists: http://www.linux.org.ru/news/java/10284102
+
+2015.05.08 00:33:31
+DocExists: http://www.linux.org.ru/news/conference/11117480
+
+2015.05.08 00:33:31
+DocExists: http://www.linux.org.ru/news/conference/11321110
+
+2015.05.08 00:33:32
+DocExists: http://www.linux.org.ru/news/hardware/11268147
+
+2015.05.08 00:33:33
+OK: http://habrahabr.ru/post/257465/
+
+2015.05.08 00:33:33
+DocExists: http://www.linux.org.ru/news/debian/11019350
+
+2015.05.08 00:33:34
+DocExists: http://www.linux.org.ru/news/multimedia/11540245
+
+2015.05.08 00:33:34
+DocExists: http://www.linux.org.ru/news/debian/11198300
+
+2015.05.08 00:33:34
+DocExists: http://www.linux.org.ru/news/kernel/10913394
+
+2015.05.08 00:33:34
+DocExists: http://www.linux.org.ru/news/internet/11258138
+
+2015.05.08 00:33:34
+DocExists: http://www.linux.org.ru/news/conference/11109842
+
+2015.05.08 00:33:35
+DocExists: http://www.linux.org.ru/news/kernel/10363450
+
+2015.05.08 00:33:38
+DocExists: http://habrahabr.ru/post/256589/
+
+2015.05.08 00:33:38
+DocExists: http://www.linux.org.ru/news/multimedia/11444198
+
+2015.05.08 00:33:38
+DocExists: http://www.linux.org.ru/news/conference/11250307
+
+2015.05.08 00:33:38
+DocExists: http://habrahabr.ru/post/257091/
+
+2015.05.08 00:33:38
+DocExists: http://www.linux.org.ru/news/opensource/11579312
+
+2015.05.08 00:33:39
+DocExists: http://habrahabr.ru/post/256505/
+
+2015.05.08 00:33:39
+DocExists: http://habrahabr.ru/company/piter/blog/245381/
+
+2015.05.08 00:33:39
+DocExists: http://www.linux.org.ru/news/kernel/10364434
+
+2015.05.08 00:33:39
+DocExists: http://www.linux.org.ru/news/conference/11413498
+
+2015.05.08 00:33:39
+DocExists: http://habrahabr.ru/post/208732/
+
+2015.05.08 00:33:40
+DocExists: http://habrahabr.ru/post/252301/
+
+2015.05.08 00:33:40
+DocExists: http://habrahabr.ru/company/infopulse/blog/234619/
+
+2015.05.08 00:33:40
+DocExists: http://www.linux.org.ru/news/internet/11143539
+
+2015.05.08 00:33:41
+DocExists: http://habrahabr.ru/post/252391/
+
+2015.05.08 00:33:41
+DocExists: http://www.linux.org.ru/news/hardware/11378542
+
+2015.05.08 00:33:41
+DocExists: http://www.linux.org.ru/news/debian/11050453
+
+2015.05.08 00:33:41
+DocExists: http://www.linux.org.ru/news/java/10862242
+
+2015.05.08 00:33:41
+DocExists: http://www.linux.org.ru/news/hardware/11268131
+
+2015.05.08 00:33:41
+DocExists: http://www.linux.org.ru/news/debian/11295664
+
+2015.05.08 00:33:42
+DocExists: http://habrahabr.ru/post/256545/
+
+2015.05.08 00:33:42
+DocExists: http://habrahabr.ru/post/257327/
+
+2015.05.08 00:33:43
+DocExists: http://www.linux.org.ru/news/commercial/11521162
+
+2015.05.08 00:33:43
+DocExists: http://habrahabr.ru/post/246339/
+
+2015.05.08 00:33:43
+DocExists: http://habrahabr.ru/post/256825/
+
+2015.05.08 00:33:43
+DocExists: http://www.linux.org.ru/news/android/10787561
+
+2015.05.08 00:33:43
+DocExists: http://www.linux.org.ru/news/opensource/11511386
+
+2015.05.08 00:33:44
+DocExists: http://www.linux.org.ru/news/multimedia/11454878
+
+2015.05.08 00:33:45
+DocExists: http://www.linux.org.ru/news/opensource/11541452
+
+2015.05.08 00:33:45
+OK: http://habrahabr.ru/company/npl/blog/256933/
+
+2015.05.08 00:33:46
+DocExists: http://habrahabr.ru/company/jugru/blog/257371/
+
+2015.05.08 00:33:46
+DocExists: http://habrahabr.ru/company/dataart/blog/256741/
+
+2015.05.08 00:33:46
+DocExists: http://www.linux.org.ru/news/hardware/11535735
+
+2015.05.08 00:33:47
+DocExists: http://habrahabr.ru/post/257071/
+
+2015.05.08 00:33:48
+DocExists: http://www.linux.org.ru/news/conference/11520686
+
+2015.05.08 00:33:49
+OK: http://habrahabr.ru/company/wolfram/blog/257455/
+
+2015.05.08 00:33:50
+DocExists: http://habrahabr.ru/post/254763/
+
+2015.05.08 00:33:51
+DocExists: http://habrahabr.ru/post/247965/
+
+2015.05.08 00:33:52
+DocExists: http://www.linux.org.ru/news/commercial/11510816
+
+2015.05.08 00:33:54
+DocExists: http://habrahabr.ru/company/intel/blog/256251/
+
+2015.05.08 00:33:56
+DocExists: http://www.linux.org.ru/news/opensource/11548751
+
+2015.05.08 00:33:56
+OK: http://habrahabr.ru/post/257445/
+
+2015.05.08 00:33:56
+DocExists: http://www.linux.org.ru/news/kernel/11210932
+
+2015.05.08 00:33:57
+DocExists: http://habrahabr.ru/company/pechkin/blog/256853/
+
+2015.05.08 00:33:57
+OK: http://habrahabr.ru/post/257481/
+
+2015.05.08 00:33:58
+DocExists: http://www.linux.org.ru/news/internet/11092804
+
+2015.05.08 00:33:58
+DocExists: http://www.linux.org.ru/news/debian/11093114
+
+2015.05.08 00:33:58
+DocExists: http://www.linux.org.ru/news/hardware/11535545
+
+2015.05.08 00:33:59
+DocExists: http://habrahabr.ru/post/171323/
+
+2015.05.08 00:33:59
+DocExists: http://www.linux.org.ru/news/android/11240101
+
+2015.05.08 00:33:59
+DocExists: http://www.linux.org.ru/news/kernel/10506907
+
+2015.05.08 00:34:00
+OK: http://habrahabr.ru/post/257503/
+
+2015.05.08 00:34:00
+DocExists: http://www.linux.org.ru/news/java/11404081
+
+2015.05.08 00:34:00
+DocExists: http://www.linux.org.ru/news/java/11274663
+
+2015.05.08 00:34:00
+DocExists: http://www.linux.org.ru/news/kernel/11134043
+
+2015.05.08 00:34:00
+DocExists: http://www.linux.org.ru/news/android/11411763
+
+2015.05.08 00:34:01
+DocExists: http://www.linux.org.ru/news/android/10755004
+
+2015.05.08 00:34:01
+DocExists: http://habrahabr.ru/post/257283/
+
+2015.05.08 00:34:03
+DocExists: http://habrahabr.ru/post/252267/
+
+2015.05.08 00:34:03
+DocExists: http://www.linux.org.ru/news/java/10851738
+
+2015.05.08 00:34:03
+DocExists: http://www.linux.org.ru/news/android/10876633
+
+2015.05.08 00:34:03
+DocExists: http://www.linux.org.ru/news/debian/11357995
+
+2015.05.08 00:34:04
+DocExists: http://habrahabr.ru/post/173071/
+
+2015.05.08 00:34:04
+DocExists: http://www.linux.org.ru/news/multimedia/11461664
+
+2015.05.08 00:34:05
+DocExists: http://www.linux.org.ru/news/kernel/11107187
+
+2015.05.08 00:34:05
+DocExists: http://habrahabr.ru/post/246503/
+
+2015.05.08 00:34:06
+OK: http://habrahabr.ru/company/xakep/blog/256667/
+
+2015.05.08 00:34:06
+OK: http://habrahabr.ru/post/247041/
+
+2015.05.08 00:34:06
+DocExists: http://www.linux.org.ru/news/java/10978552
+
+2015.05.08 00:34:06
+DocExists: http://www.linux.org.ru/news/multimedia/11563012
+
+2015.05.08 00:34:06
+OK: http://www.linux.org.ru/news/internet/11587388
+
+2015.05.08 00:34:06
+DocExists: http://www.linux.org.ru/news/hardware/11572179
+
+2015.05.08 00:34:07
+OK: http://habrahabr.ru/post/257485/
+
+2015.05.08 00:34:07
+DocExists: http://habrahabr.ru/post/257167/
+
+2015.05.08 00:34:08
+OK: http://habrahabr.ru/company/ivi/blog/257431/
+
+2015.05.08 00:34:09
+OK: http://habrahabr.ru/post/257491/
+
+2015.05.08 00:34:09
+DocExists: http://www.linux.org.ru/news/opensource/11550556
+
+2015.05.08 00:34:09
+DocExists: http://www.linux.org.ru/news/commercial/11468027
+
+2015.05.08 00:34:09
+DocExists: http://www.linux.org.ru/news/internet/11146988
+
+2015.05.08 00:34:09
+DocExists: http://www.linux.org.ru/news/android/11004104
+
+2015.05.08 00:34:09
+DocExists: http://www.linux.org.ru/news/multimedia/11412244
+
+2015.05.08 00:34:09
+DocExists: http://www.linux.org.ru/news/commercial/11337405
+
+2015.05.08 00:34:10
+DocExists: http://habrahabr.ru/post/256791/
+
+2015.05.08 00:34:10
+DocExists: http://www.linux.org.ru/news/multimedia/11500027
+
+2015.05.08 00:34:10
+OK: http://www.linux.org.ru/news/conference/11582756
+
+2015.05.08 00:34:11
+DocExists: http://www.linux.org.ru/news/internet/11559405
+
+2015.05.08 00:34:11
+DocExists: http://www.linux.org.ru/news/kernel/11091145
+
+2015.05.08 00:34:11
+DocExists: http://www.linux.org.ru/tag/android-x86
+
+2015.05.08 00:34:11
+DocExists: http://www.linux.org.ru/news/multimedia/11363342
+
+2015.05.08 00:34:12
+DocExists: http://www.linux.org.ru/news/hardware/11465778
+
+2015.05.08 00:34:12
+OK: http://habrahabr.ru/post/256367/
+
+2015.05.08 00:34:12
+DocExists: http://www.linux.org.ru/news/conference/11236807
+
+2015.05.08 00:34:13
+DocExists: http://www.linux.org.ru/news/hardware/11552855/page7?lastmod=1430815115786
 

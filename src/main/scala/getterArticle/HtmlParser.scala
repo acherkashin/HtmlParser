@@ -28,7 +28,7 @@ class HtmlParser(readerConfigurations : ReaderConfigurations){
   private val strUrl = readerConfigurations.getCurrentPage
 
   private def getTimeOut(url :String) : Int ={
-    var timeOut = 15
+    var timeOut = 5
 
     try {
       val robots = Source.fromURL(s"$url/robots.txt", "UTF-8").mkString
@@ -101,9 +101,7 @@ class HtmlParser(readerConfigurations : ReaderConfigurations){
   }
 
   def LoadHtmlItemFromPage() : Array[HtmlItem] ={
-
     val timeOut = getTimeOut(strUrl)*1000                   //простой страницы
-
     val logger = new Logger("article")                      //записываем в лог
     logger.write(s"Обработка страницы $strUrl")
     logger.write(s"TimeOut: $timeOut")
@@ -123,7 +121,7 @@ class HtmlParser(readerConfigurations : ReaderConfigurations){
 
         if(valid){
           HtmlItems += HtmlItem.CreateHtmlItem(url, keyValueArticle, keyValueDateTime)
-          Thread.sleep(timeOut)
+          //Thread.sleep(timeOut)
         }
       }
       catch{

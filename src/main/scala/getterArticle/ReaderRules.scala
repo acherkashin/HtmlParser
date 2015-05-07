@@ -6,9 +6,15 @@ import scala.io.Source
 /**
  * Created by Александр on 29.03.2015.
  */
+//Добавить класс WebSite и добавить в него методы из класса RederConfiguration
+//Добавить класс WebSites и добавить в него методы из класса RederConfiguration
+//Класс ReaderConfiguration будет иметь единственный метод, который возвращает экземпляр класса WebSites
+//Класс ReaderConfiguration можно преобразовать в объект
+
 case class KeyValue(key : String, value : String)
 
-//case class WebSite(startPage : String,pagesOfCurrentSite : Array[String], currentPage: Int, )
+
+case class WebSite(jsonRules : JsonObject,startPage : String, pagesOfCurrentSite : Array[String], currentPage : Int, currentIndexOfPage : Int, countPages : Int )
 
 class ReaderConfigurations(nameFile : String){
 

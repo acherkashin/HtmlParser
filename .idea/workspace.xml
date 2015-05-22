@@ -57,7 +57,7 @@
       <file leaf-file-name="Starter.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/Starter.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="282" max-vertical-offset="1904">
+            <state vertical-scroll-proportion="0.0" vertical-offset="840" max-vertical-offset="1904">
               <caret line="6" column="7" selection-start-line="6" selection-start-column="7" selection-end-line="6" selection-end-column="7" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
@@ -81,8 +81,8 @@
       <file leaf-file-name="HtmlParser.scala" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/HtmlParser.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.6234413" vertical-offset="1355" max-vertical-offset="2159">
-              <caret line="124" column="0" selection-start-line="95" selection-start-column="0" selection-end-line="124" selection-end-column="0" />
+            <state vertical-scroll-proportion="-0.019950125" vertical-offset="1674" max-vertical-offset="2159">
+              <caret line="104" column="26" selection-start-line="104" selection-start-column="26" selection-end-line="104" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -159,8 +159,8 @@
       <file leaf-file-name="article.log" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/article.log">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="204">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="306">
+              <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -956,12 +956,12 @@
       <workItem from="1431205177237" duration="3947000" />
       <workItem from="1431444996673" duration="5944000" />
       <workItem from="1432321372355" duration="1723000" />
-      <workItem from="1432326031218" duration="2041000" />
+      <workItem from="1432326031218" duration="2575000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="251482000" />
+    <option name="totallyTimeSpent" value="252016000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
@@ -1391,8 +1391,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/article.log">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="401">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="306">
+          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1409,8 +1409,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/HtmlParser.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.6234413" vertical-offset="1355" max-vertical-offset="2159">
-          <caret line="124" column="0" selection-start-line="95" selection-start-column="0" selection-end-line="124" selection-end-column="0" />
+        <state vertical-scroll-proportion="-0.019950125" vertical-offset="1674" max-vertical-offset="2159">
+          <caret line="104" column="26" selection-start-line="104" selection-start-column="26" selection-end-line="104" selection-end-column="26" />
           <folding />
         </state>
       </provider>

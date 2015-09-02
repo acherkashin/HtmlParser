@@ -1,5 +1,26 @@
 {
-  "sites":["http:\/\/habrahabr.ru", "http:\/\/www.linux.org.ru" ],
+	"sites":[ "http:\/\/4pda.ru", "http:\/\/geekbrains.ru", "http:\/\/habrahabr.ru","http:\/\/www.linux.org.ru"],
+
+	"http:\/\/4pda.ru" : {
+ 							"pages":["http:\/\/4pda.ru",
+							         "http:\/\/4pda.ru\/articles\/",
+							         "http:\/\/4pda.ru\/news\/",
+							         "http:\/\/4pda.ru\/reviews\/",
+							  		 "http:\/\/4pda.ru\/software\/",
+							  		 "http:\/\/4pda.ru\/games\/"
+ 									],
+ 							"dateTime":["class","date"],
+ 							"content" : ["class","content-box"],
+ 							"templateURL" : ["http:\/\/4pda.ru\/[0-9]+\/[0-9]+\/[0-9]+\/[0-9]+\/"],
+ 							"invalidPartsURL" : ["comments"]
+						},
+  "http:\/\/geekbrains.ru":{
+							"pages":["http:\/\/geekbrains.ru\/posts\/"],
+							"dateTime" : ["class","text-md m-r-md"],
+							"content" : ["class", "text-md text-dark content_text content"]	,
+							"templateURL" : ["http:\/\/geekbrains.ru\/posts\/.+"],
+							"invalidPartsURL" : ["http:\/\/geekbrains.ru\/posts\/new"]
+						  },
 
   "http:\/\/habrahabr.ru" : {
 							 "pages":["http:\/\/habrahabr.ru",
@@ -14,40 +35,48 @@
 							          "http:\/\/habrahabr.ru\/hub\/programming"
 							 ],
 
-							 "dateTime" : ["class","published"],//селектор и его знаение для получения времени публикации
+							 "dateTime" : ["class","published"],
 
 							  "content" : ["class","content html_format"],
 
-							  "prefCheckUrl" : [ "http:\/\/habrahabr.ru"],//строки, которые должны содержать все ссылки
+							  "templateURL" : [ "http:\/\/habrahabr.ru\/top\/.+",
+							  					"http:\/\/habrahabr.ru\/post\/.+",
+							  					"http:\/\/habrahabr.ru\/blog\/.+" ],
 
-							  "htmlItems" : [ "top", "\/post\/", "blog"], //строки,одну из которых, должны содержать ссылки на статьи
-
-							  "invalidUrl" : [   ".jpg", ".css", ".jpg", ".png", "\/user", "\/register","\/auth", "\/login", "#", "posts\/top","utm_source"]
-							},//строки, которые не должны содержаться в ссылках
-
+							  "invalidPartsURL" : [   ".jpg", ".css", ".jpg", ".png", "\/user", "\/register","\/auth", "\/login", "#", "posts\/top","utm_source"]
+							},
   "http:\/\/www.linux.org.ru" : {
-									"pages" : [ "http:\/\/www.linux.org.ru",
-									            "http:\/\/www.linux.org.ru\/news\/opensource",
-											    "http:\/\/www.linux.org.ru\/news\/java",
-												"http:\/\/www.linux.org.ru\/news\/internet",
-												"http:\/\/www.linux.org.ru\/news\/commercial",
-												"http:\/\/www.linux.org.ru\/news\/conference",
-												"http:\/\/www.linux.org.ru\/news\/hardware",
-												"http:\/\/www.linux.org.ru\/news\/android",
-												"http:\/\/www.linux.org.ru\/news\/kernel",
-												"http:\/\/www.linux.org.ru\/news\/multimedia",
-												"http:\/\/www.linux.org.ru\/news\/debian",
-												"http:\/\/www.linux.org.ru\/news\/games"],
+							  "pages" : [ "http:\/\/www.linux.org.ru",
+								"http:\/\/www.linux.org.ru\/news\/opensource",
+								"http:\/\/www.linux.org.ru\/news\/java",
+								"http:\/\/www.linux.org.ru\/news\/internet",
+								"http:\/\/www.linux.org.ru\/news\/commercial",
+								"http:\/\/www.linux.org.ru\/news\/conference",
+								"http:\/\/www.linux.org.ru\/news\/hardware",
+								"http:\/\/www.linux.org.ru\/news\/android",
+								"http:\/\/www.linux.org.ru\/news\/kernel",
+								"http:\/\/www.linux.org.ru\/news\/multimedia",
+								"http:\/\/www.linux.org.ru\/news\/debian",
+								"http:\/\/www.linux.org.ru\/news\/games",
+								"http:\/\/www.linux.org.ru\/news\/kde"],
 
-									"dateTime" : ["itemprop", "dateCreated"],
+							  "dateTime" : ["itemprop", "dateCreated"],
 
-									"content" : ["class","msg_body"],
+							  "content" : ["itemprop","articleBody"],
 
-									"prefCheckUrl" : [ "http:\/\/www.linux.org.ru\/"],//строки, которые должны содержать все ссылки
+							  "templateURL" : [  	"http:\/\/www.linux.org.ru\/news\/opensource\/.+",
+												  "http:\/\/www.linux.org.ru\/news\/java\/.+",
+												  "http:\/\/www.linux.org.ru\/news\/internet\/.+",
+												  "http:\/\/www.linux.org.ru\/news\/commercial\/.+",
+												  "http:\/\/www.linux.org.ru\/news\/conference\/.+",
+												  "http:\/\/www.linux.org.ru\/news\/hardware\/.+",
+												  "http:\/\/www.linux.org.ru\/news\/android\/.+",
+												  "http:\/\/www.linux.org.ru\/news\/kernel\/.+",
+												  "http:\/\/www.linux.org.ru\/news\/multimedia\/.+",
+												  "http:\/\/www.linux.org.ru\/news\/debian\/.+",
+												  "http:\/\/www.linux.org.ru\/news\/games\/.+",
+												  "http:\/\/www.linux.org.ru\/news\/kde\/.+"],
 
-									"htmlItems" : [ "opensource", "commercial", "conference", "hardware", "android", "kernel", "multimedia",
-													"debian", "mozila", "java", "internet", "games" ], //строки,одну из которых, должны содержать ссылки на статьи
-
-									"invalidUrl" : [   ".jpg", ".css", ".jpg", ".png", "\/user", "\/register", "\/auth", "\/login", "#", "forum", "offset"]
-								  }
+							  "invalidPartsURL" : [   ".jpg", ".css", ".jpg", ".png", "\/user", "\/register", "\/auth", "\/login", "#", "forum", "offset"]
+  }
 }

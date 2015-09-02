@@ -1,9 +1,9 @@
 import java.util
+import java.util.regex.{Matcher, Pattern}
+import ParsDateTime.{BaseDateTime, GeekBrainsDateTime}
+import WorkWithHtml.{HtmlItem, Logger, ReaderConfiguration}
 import org.joda.time.DateTime
 
-/**
- * Created by Александр on 28.03.2015.
- */
 object Starter {
   private val postUrl = "http://188.226.178.169:3000/insert-document"
   private val logger = new Logger("article")
@@ -12,7 +12,10 @@ object Starter {
 
   def main(args:Array[String]):Unit = {
     try {
-      infiniteLoop                                            //val articleWriter = new ArticleWriter //articleWriter.WriteToFiles(array)
+    infiniteLoop
+//    val articleWriter = new ArticleWriter
+//    articleWriter.WriteToFiles(HashSetToArray(getAllHtmlItems()))
+
     }catch{
       case e: Exception => logger.write(e.getMessage)
     }
@@ -27,45 +30,39 @@ object Starter {
 
   private def postItem(item: HtmlItem) {
     try{
-
       val res = PostRequest.send(postUrl, item.toJson)
       res match {
         case x: DocExists => logger.write("DocExists: "+item.url)
         case x: OK        => logger.write("OK: "+item.url)
       }
     }catch {
-      case ex: Exception => logger.write("Error: "+ex.getMessage)
+      case ex: Exception => logger.Error(ex)
     }
   }
+  private def getAllHtmlItems(): util.HashSet[HtmlItem] = {
+    val HtmlItems = new util.HashSet[HtmlItem]()
+    try {
+      val arraySites = new ReaderConfiguration(nameConfigFile).getWebSites()
 
-  private def getAllHtmlItems(): util.HashSet[HtmlItem] ={
-    val readerConfigurations = new ReaderConfigurations(nameConfigFile)           //считываем правила по указанному имени файла
-    val countSites = readerConfigurations.CountSites                              // получаем количество сайтов
-    val setArticle = new util.HashSet[HtmlItem]()
-
-    for (i <- 0 until countSites ) {
-      try {
-        val countPages = readerConfigurations.getCountPages
-
-        for (j <- 0 until countPages) {
-          try {
-            val parser = new HtmlParser(readerConfigurations)                     // передаём в конструктор читателя конфига
-            val array = parser.LoadHtmlItemFromPage()                             // считываем статьи с указанного сайта
-            logger.write("Amount article: " + array.size.toString)             // записываем количество статей в лог Файл
-            AddArrayToSet(array, setArticle)                                      // записываем массив статей в множество
-
-            readerConfigurations.nextPage                                         // переходим на следующую страницу
-          } catch {
-            case ex: Exception => logger.write(ex.getMessage)
-          }
+      for (site <- arraySites) {
+        try {
+          HtmlItems.addAll( site.getAllHtmlItems )
         }
-      }catch{
-        case ex: Exception => logger.write(ex.getMessage)
+        catch {
+          case ex: Exception => logger.Error(ex)
+        }
       }
-      readerConfigurations.nextSite
+    }catch{
+      case ex : Exception => logger.Error(ex)
     }
+    HtmlItems
+  }
 
-    setArticle
+  private def shouldLoad(lastLoad: Option[DateTime]) : Boolean= {
+    lastLoad match {
+               case None    => true
+               case Some(x) => DateTime.now.isAfter(x.plusSeconds(reloadDelaySec))
+            }
   }
 
   private def infiniteLoop(): Unit = {
@@ -85,13 +82,6 @@ object Starter {
         case x :Exception  => logger.write("Error: " + x.getMessage)
       }
     }
-  }
-
-  private def shouldLoad(lastLoad: Option[DateTime]) : Boolean= {
-    lastLoad match {
-               case None    => true
-               case Some(x) => DateTime.now.isAfter(x.plusSeconds(reloadDelaySec))
-            }
   }
 
   private def HashSetToArray(hashSet : util.HashSet[HtmlItem]): Array[HtmlItem] ={

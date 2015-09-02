@@ -1,5 +1,8 @@
 import java.io.{File, FileWriter}
 import java.nio.file.Paths
+import java.util
+
+import WorkWithHtml.{HtmlItem, Logger}
 
 /**
  * Created by Александр on 30.03.2015.
@@ -33,25 +36,22 @@ class ArticleWriter() {
   }
 
   def WriteToFiles(arrayArticle : Array[HtmlItem]): Unit = {
-      val logger = new Logger("article")
-      var countErrors = 0
-      workWithDirectory()
+    val logger = new Logger("article")
+    var countErrors = 0
+    workWithDirectory()
 
-      var name = ""
-      var index = 0;
-      for (htmlItem <- arrayArticle) {
-        index += 1
+    var indexName = 0
+    for (htmlItem <- arrayArticle) {
+      indexName += 1
 
-        try {
-          name = index.toString
-          writeToFile(name, htmlItem)
-        }
-        catch {
-          case _ => {logger.write(s"Error writing articles $name")
-                      countErrors += 1}
-
-        }
+      try {
+        writeToFile(indexName.toString, htmlItem)
       }
+      catch {
+        case _ => {logger.write("Error writing articles: " + indexName.toString)
+                    countErrors += 1}
+      }
+    }
     logger.write(s"Amount errors $countErrors");
   }
 }

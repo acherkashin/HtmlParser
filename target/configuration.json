@@ -1,0 +1,53 @@
+{
+  "sites":["http:\/\/habrahabr.ru", "http:\/\/www.linux.org.ru" ],
+
+  "http:\/\/habrahabr.ru" : {
+							 "pages":["http:\/\/habrahabr.ru",
+							   		  "http:\/\/habrahabr.ru\/hub\/scala",
+							          "http:\/\/habrahabr.ru\/hub\/cpp",
+							          "http:\/\/habrahabr.ru\/hub\/csharp",
+							 		  "http:\/\/habrahabr.ru\/hub\/html5",
+							 		  "http:\/\/habrahabr.ru\/hub\/css",
+							          "http:\/\/habrahabr.ru\/hub\/java",
+	                                  "http:\/\/habrahabr.ru\/hub\/lisp",
+							 		  "http:\/\/habrahabr.ru\/hub\/Git",
+							          "http:\/\/habrahabr.ru\/hub\/programming"
+							 ],
+
+							 "dateTime" : ["class","published"],//селектор и его знаение для получения времени публикации
+
+							  "content" : ["class","content html_format"],
+
+							  "prefCheckUrl" : [ "http:\/\/habrahabr.ru"],//строки, которые должны содержать все ссылки
+
+							  "htmlItems" : [ "top", "\/post\/", "blog"], //строки,одну из которых, должны содержать ссылки на статьи
+
+							  "invalidUrl" : [   ".jpg", ".css", ".jpg", ".png", "\/user", "\/register","\/auth", "\/login", "#", "posts\/top","utm_source"]
+							},//строки, которые не должны содержаться в ссылках
+
+  "http:\/\/www.linux.org.ru" : {
+									"pages" : [ "http:\/\/www.linux.org.ru",
+									            "http:\/\/www.linux.org.ru\/news\/opensource",
+											    "http:\/\/www.linux.org.ru\/news\/java",
+												"http:\/\/www.linux.org.ru\/news\/internet",
+												"http:\/\/www.linux.org.ru\/news\/commercial",
+												"http:\/\/www.linux.org.ru\/news\/conference",
+												"http:\/\/www.linux.org.ru\/news\/hardware",
+												"http:\/\/www.linux.org.ru\/news\/android",
+												"http:\/\/www.linux.org.ru\/news\/kernel",
+												"http:\/\/www.linux.org.ru\/news\/multimedia",
+												"http:\/\/www.linux.org.ru\/news\/debian",
+												"http:\/\/www.linux.org.ru\/news\/games"],
+
+									"dateTime" : ["itemprop", "dateCreated"],
+
+									"content" : ["class","msg_body"],
+
+									"prefCheckUrl" : [ "http:\/\/www.linux.org.ru\/"],//строки, которые должны содержать все ссылки
+
+									"htmlItems" : [ "opensource", "commercial", "conference", "hardware", "android", "kernel", "multimedia",
+													"debian", "mozila", "java", "internet", "games" ], //строки,одну из которых, должны содержать ссылки на статьи
+
+									"invalidUrl" : [   ".jpg", ".css", ".jpg", ".png", "\/user", "\/register", "\/auth", "\/login", "#", "forum", "offset"]
+								  }
+}

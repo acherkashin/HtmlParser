@@ -1,4 +1,6 @@
-import java.io.FileWriter
+package WorkWithHtml
+
+import java.io.{PrintWriter, StringWriter, FileWriter}
 import java.nio.file.Paths
 
 import org.joda.time.DateTime
@@ -28,6 +30,16 @@ class Logger(name: String) {
          fw.write(s"$time\n$msg\n\n")
        }
 
-     override def toString = name
+  override def toString = name
+  def Error(ex : Exception): Unit = {
+    val sw = new StringWriter()
+    val pw = new PrintWriter(sw)
+    ex.printStackTrace(pw)
 
+    write("Error: " + ex.getMessage + '\n' + "StackTrace" + sw.toString)
+  }
+
+  def Info(str : String) = {
+    write(s"Info: $str")
+  }
 }

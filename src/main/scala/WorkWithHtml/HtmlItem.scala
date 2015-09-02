@@ -1,3 +1,6 @@
+package WorkWithHtml
+
+import ParsDateTime.BaseDateTime
 import org.apache.commons.lang3.StringEscapeUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -26,19 +29,17 @@ case class HtmlItem(url: String,title : String, description : String, dateTime :
 /*меод получает 1)url, 2)селектор со значением, по которому он будет получать содержимое статьи
  и 3) селектор со значением, по которому он будет получать дату и время публикации*/
 object HtmlItem{
-  def CreateHtmlItem(url:String, keyValueArticle: KeyValue, keyValueDateTime: KeyValue): HtmlItem = {
+  def CreateHtmlItem(url:String, keyValueArticle: KeyAndValue, keyValueDateTime: KeyAndValue): HtmlItem = {
     val doc: Document = Jsoup.connect(url).get                                             //получаем содержимое страницы
 
     val elementsWithClass: Elements =
-      doc.getElementsByAttributeValue(keyValueArticle.key, keyValueArticle.value)           // получаем содержимое статьи
+      doc.getElementsByAttributeValue(keyValueArticle.Key, keyValueArticle.Value)           // получаем содержимое статьи
 
     val title = doc.title                                                                   //получаем заголовок статьи
     val description = elementsWithClass.text
-    val dateTime =
-      doc.getElementsByAttributeValue(keyValueDateTime.key, keyValueDateTime.value).text    // получаем дату и время
-    val time = DateTimeParser.parseDateTime(dateTime, url)
-
-    new HtmlItem(url, title, description, time)
+    val dateTime = doc.getElementsByAttributeValue(keyValueDateTime.Key, keyValueDateTime.Value).first.text   // получаем дату и время
+    val parseredDateTime = BaseDateTime.recognitionWebSite(url).setStrDateTime(dateTime).getDateTime                       //преобразуем дату и время в необходимый формат
+    new HtmlItem(url, title, description, parseredDateTime)
   }
 
 }
